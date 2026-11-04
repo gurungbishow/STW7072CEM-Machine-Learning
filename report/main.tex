@@ -5,7 +5,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
-\graphicspath{{../}{../figures/}{./}{figures/}}
+\graphicspath{{../}{figures/}{./}{figures/}}
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{array}
@@ -100,7 +100,7 @@
 \end{@twocolumnfalse}
 }]
 
-{\small\noindent{\bfseries\textit{Abstract}---}{\bfseries Flash floods from heavy monsoon downpours regularly damage roads, homes, and riverbanks in the Kathmandu Valley. Spotting these rare storms from daily gridded weather archives is difficult because dry and light-rain days outnumber extreme storms by roughly nineteen to one. This study builds a {\normalfont 30}-year daily dataset ({\normalfont 1995}--{\normalfont 2024}; {\normalfont 10,958} raw days and {\normalfont 10,951} complete rows after lag creation) from NASA POWER and MERRA-2 records for the Tribhuvan International Airport grid cell, split by date at {\normalfont 31} December {\normalfont 2018} into {\normalfont 8,759} training days ({\normalfont 1995}--{\normalfont 2018}; {\normalfont 439} extremes at or above the {\normalfont 95}th percentile of {\normalfont 13.74} mm/day) and {\normalfont 2,192} holdout test days ({\normalfont 2019}--{\normalfont 2024}; {\normalfont 164} extremes). Principal Component Analysis (PCA) compresses {\normalfont 22} weather predictors into {\normalfont 7} components keeping {\normalfont 91.46\%} of total variation, Fast Independent Component Analysis (FastICA) separates sharp rain bursts, and K-Means ($K=3$) groups {\normalfont 94.99\%} ({\normalfont 417} of {\normalfont 439}) of training storms into one wet monsoon cluster. Five classifiers---Logistic Regression, Decision Tree (CART), Radial Basis Function Support Vector Machine (RBF-SVM), Random Forest, and k-Nearest Neighbours (k-NN)---are then compared. Random Forest records the highest test F{\normalfont 1}-score ({\normalfont 0.4385}) and Precision-Recall AUC ({\normalfont 0.5517}) at {\normalfont 90.24\%} recall, while class-weighted Logistic Regression catches {\normalfont 96.34\%} of storms ({\normalfont 158} of {\normalfont 164}). Unweighted k-NN fails badly, missing {\normalfont 71.34\%} of storms despite {\normalfont 93.16\%} overall accuracy. Lowering the Random Forest warning cutoff to {\normalfont 0.30} under a {\normalfont 15}-to-{\normalfont 1} missed-flood penalty lifts test recall to {\normalfont 98.17\%} ({\normalfont 161} of {\normalfont 164} storms) and flags the {\normalfont 24}--{\normalfont 28} September {\normalfont 2024} Kathmandu flood both on the same day and {\normalfont 24} hours ahead.}
+{\small\noindent{\bfseries\textit{Abstract}---}{\bfseries Heavy monsoon rain floods the Kathmandu Valley almost every year. Dry and light-rain days outnumber extreme cloudbursts by nineteen to one in gridded weather records, and that skew breaks standard forecast models. Here, {\normalfont 10,958} raw daily weather records ({\normalfont 1995}--{\normalfont 2024}; {\normalfont 10,951} post-lag rows) from the NASA POWER and MERRA-2 archive at Tribhuvan International Airport are divided at {\normalfont 31} December {\normalfont 2018} into {\normalfont 8,759} training days ({\normalfont 439} storms $\ge {\normalfont 13.74}$ mm/day, the training {\normalfont 95}th percentile) and {\normalfont 2,192} unseen test days ({\normalfont 2019}--{\normalfont 2024}; {\normalfont 164} storms). Seven Principal Component Analysis (PCA) axes keep {\normalfont 91.46\%} of predictor variance. Fast Independent Component Analysis (FastICA) pulls out non-Gaussian rain spikes, and three-cluster K-Means groups {\normalfont 94.99\%} ({\normalfont 417} of {\normalfont 439}) of training storms into one active monsoon regime. On the {\normalfont 2019}--{\normalfont 2024} holdout set, five models are benchmarked: Logistic Regression, Decision Tree (CART), Radial Basis Function Support Vector Machine (RBF-SVM), Random Forest, and k-Nearest Neighbours (k-NN). Random Forest leads in harmonic F{\normalfont 1} ({\normalfont 0.4385}) and Precision-Recall AUC ({\normalfont 0.5517}) with {\normalfont 90.24\%} storm recall, whereas balanced Logistic Regression flags {\normalfont 96.34\%} of test storms ({\normalfont 158} of {\normalfont 164}). Unweighted k-NN fails. Despite {\normalfont 93.16\%} accuracy, it misses {\normalfont 71.34\%} of storms. When the Random Forest cutoff drops to {\normalfont 0.30} under a {\normalfont 15}-to-{\normalfont 1} missed-flood loss, test recall climbs to {\normalfont 98.17\%} ({\normalfont 161} of {\normalfont 164}) and catches the {\normalfont 24}--{\normalfont 28} September {\normalfont 2024} Kathmandu flood a day early.}
 
 \vspace{4pt}
 \noindent{\bfseries\textit{Index Terms}---Cost-sensitive threshold tuning, Decision Tree, extreme rainfall classification, feature importance, imbalanced weather data, Kathmandu Valley, K-Means clustering, Logistic Regression, machine learning comparison, MERRA-2 reanalysis, monsoon flood warning, Principal Component Analysis, Random Forest, Support Vector Machine, Tribhuvan International Airport.\par}\par}
@@ -108,52 +108,52 @@
 \section{Introduction}
 
 \subsection{Background and Motivation}
-Summer monsoon troughs and late-September low-pressure systems regularly cause flash floods across central Nepal \cite{ref1,ref2,ref3}. Ringed by the Shivapuri, Phulchowki, and Chandragiri hills above 2,500 m, the Kathmandu Valley sits at 1,300 to 1,400 m elevation and drains all Bagmati and Bishnumati river water through a single narrow rock cut at the Chobhar gorge \cite{ref4,ref5}. Urban concrete has replaced most of the valley's open floodplains over the past twenty years. Daily rain above 14 to 25 mm/day now fills roadside drains beyond capacity within hours \cite{ref5,ref6,ref7,ref8}. That risk became clear between 24 and 28 September 2024, when five straight days of extreme rain peaking at 93.26 mm/day on the Tribhuvan International Airport grid cell flooded riverside neighbourhoods, halted flights, and killed more than 240 people across Nepal \cite{ref6,ref7}.
+Active monsoon troughs and late-September depressions bring severe flooding to central Nepal \cite{ref1,ref2,ref3}. High ridges at Shivapuri, Phulchowki, and Chandragiri (>2,500 m) ring the Kathmandu Valley floor (1,300--1,400 m) and funnel all Bagmati and Bishnumati runoff through one narrow rock outlet at Chobhar \cite{ref4,ref5}. Rapid paving over the last two decades has sealed most natural floodplains. Even 14 to 25 mm of daily rain now swamps street drains in a few hours \cite{ref5,ref6,ref7,ref8}. Between 24 and 28 September 2024, five straight days of torrential rain reached 93.26 mm/day on the Tribhuvan International Airport grid cell, inundated riverside settlements, shut down airport operations, and claimed over 240 lives across Nepal \cite{ref6,ref7}.
 
-Large physics-based weather models track regional South Asian monsoon flow \cite{ref9,ref10,ref11}, but they need heavy computing power and smooth out local valley cloudbursts across wide grid squares \cite{ref3,ref12}. Machine learning classifiers offer a fast local option by linking daily humidity, temperature, air pressure, sunlight, and past rainfall directly to storm probabilities \cite{ref1,ref2,ref12}. Three practical problems still make daily storm classification difficult in Kathmandu. Extreme rain at or above the 95th percentile (13.74 mm/day) happens on only 5.01\% of training days (a 1-to-19 ratio), which pushes standard models toward predicting dry weather \cite{ref2,ref3}. Monsoon wet spells also last several days in a row, so random train-test splits leak storm information across neighbouring dates \cite{ref1,ref13}. Above all, missing a major flood causes far worse harm than issuing a false standby alert \cite{ref3,ref6}.
+Physics-based weather models track regional South Asian monsoon flow well \cite{ref9,ref10,ref11}. Even so, they demand heavy computing power and blur local valley cloudbursts across wide grid boxes \cite{ref3,ref12}, whereas statistical classifiers run in seconds by linking daily humidity, temperature, air pressure, sunlight, and past rain directly to storm probabilities \cite{ref1,ref2,ref12}. Three obstacles complicate the task. Extreme rain ($\ge 13.74$ mm/day) falls on only 5.01\% of training days (a 1-to-19 ratio) and biases standard models toward dry forecasts \cite{ref2,ref3}, while multi-day monsoon wet spells cause severe data leakage under random train-test splits \cite{ref1,ref13}. Missed floods also cost far more than false alarms \cite{ref3,ref6}.
 
 \subsection{Research Aim and Objectives}
-This study evaluates unsupervised weather-grouping methods and supervised classification models for detecting extreme daily rainfall at the Kathmandu Airport grid cell. Three research objectives guide the work:
+This study tests unsupervised weather-grouping methods and five supervised classifiers for extreme daily rainfall detection at the Kathmandu Airport grid cell. Three objectives structure the experiments:
 \begin{itemize}
   \setlength{\itemsep}{1.5pt}\setlength{\parskip}{0pt}
-  \item \textbf{RO1 (Data Preparation and Unsupervised Regime Analysis):} Build a leak-free 30-year daily dataset (1995--2024; 10,951 post-lag rows and 22 weather predictors) from NASA POWER and MERRA-2 records using a strict date split at 31 December 2018, and apply PCA, FastICA, and K-Means clustering to examine seasonal weather groups and monsoon storm concentration.
-  \item \textbf{RO2 (Supervised Classifier Comparison and Feature Analysis):} Train and compare Logistic Regression, Decision Tree (CART), RBF-SVM, Random Forest, and k-NN on imbalanced rainfall data across test recall, feature importance, probability reliability, 7-component PCA comparison, and runtime speed.
-  \item \textbf{RO3 (Cost-Sensitive Thresholding and Operational Testing):} Tune warning cutoffs under a 15-to-1 missed-flood penalty, test 24-hour advance forecasting and wet-day deluge detection, and check the warning rules against the September 2024 Kathmandu flood.
+  \item \textbf{RO1 (Data Pipeline and Unsupervised Regimes):} Build a leak-free 30-year daily dataset (1995--2024; 10,951 post-lag rows and 22 predictors) from NASA POWER and MERRA-2 records with a strict split at 31 December 2018, then run PCA, FastICA, and K-Means to measure storm concentration across seasonal weather regimes.
+  \item \textbf{RO2 (Classifier Comparison and Feature Drivers):} Train Logistic Regression, Decision Tree (CART), RBF-SVM, Random Forest, and k-NN on the 1995--2018 record. Compare their 2019--2024 test recall, feature rankings, Brier calibration, 7-component PCA skill, and runtime speed.
+  \item \textbf{RO3 (Cost-Sensitive Thresholds and Operational Tests):} Tune warning cutoffs under a 15-to-1 missed-flood penalty and test 24-hour advance forecasts, wet-day deluges ($\ge 22.75$ mm/day), and the September 2024 Kathmandu flood.
 \end{itemize}
 
 \section{Literature Review}
 
 \subsection{Himalayan Extreme Rainfall Trends}
-Long-term rain-gauge studies in the Kathmandu Valley show that heavy monsoon downpours have grown more intense over the last thirty years even where total yearly rainy days have changed very little \cite{ref4,ref5,ref8}. Studying valley station records, Chaulagain \textit{et al.} \cite{ref4} and Khanal \textit{et al.} \cite{ref5} tied rising 95th-percentile rainfall to stronger Bay of Bengal moisture flow combined with urban surface heating across the valley floor. Phuyal \cite{ref8} found that nearly 90\% of heavy rain events fall between June and September. Across the wider Himalaya, Wani \textit{et al.} \cite{ref9}, Pujara and Paudel \cite{ref10}, and Bashyal \textit{et al.} \cite{ref11} showed that simple linear time-series models miss sudden mountain cloudbursts, whereas deep neural networks require large computing budgets and dense ground stations \cite{ref11,ref12}. Continuous satellite-reanalysis archives such as NASA POWER and MERRA-2 fill these station gaps reliably \cite{ref13}.
+Total wet days per year in Kathmandu have stayed nearly flat over the past three decades. Peak downpours tell a different story \cite{ref4,ref5,ref8}. In valley gauge series, Chaulagain \textit{et al.} \cite{ref4} and Khanal \textit{et al.} \cite{ref5} linked steeper 95th-percentile rain totals to warmer urban land surfaces and stronger moisture transport from the Bay of Bengal, while Phuyal \cite{ref8} showed that almost 90\% of heavy rain days occur between June and September. Elsewhere in the Himalaya, Wani \textit{et al.} \cite{ref9}, Pujara and Paudel \cite{ref10}, and Bashyal \textit{et al.} \cite{ref11} found that linear time-series models miss abrupt mountain cloudbursts. Deep recurrent and transformer models track nonlinear shifts better yet demand dense station networks and heavy compute \cite{ref11,ref12}; gridded reanalysis products such as NASA POWER and MERRA-2 bridge those gauge gaps across long multi-decade windows \cite{ref13}.
 
 \subsection{Limitations of Continuous Rainfall Regression}
-Treating extreme storm detection as continuous millimetre regression is a common weakness in recent rainfall studies. On a 10-year Kathmandu city dataset (2015--2025), Poudyal \textit{et al.} \cite{ref1} compared Random Forest, Support Vector Regression, k-NN, and recurrent neural regressors using root-mean-square error (RMSE) and mean absolute error (MAE). Because standard regression error weights dry days and storm days equally, their best regression model squeezed actual rainfall peaks above 17 mm/day down to predicted values below 7 mm/day \cite{ref1,ref3}. Nurmayati \cite{ref2} reported an even clearer breakdown across 52,703 ten-minute weather records in South Tangerang, Indonesia. Over 90\% of those ten-minute periods were dry (0 mm), so Random Forest, SVM, and k-NN reached low average error ($<0.10$ mm) simply by predicting near-zero rain everywhere, producing negative $R^2$ scores ($-0.062$ to $-14.378$) while random 10-fold cross-validation leaked neighbouring storm rows between folds. Global AI weather models such as Pangu-Weather \cite{ref14} and GraphCast \cite{ref15} also smooth out local grid-cell extremes when trained on average global error \cite{ref3}. Threshold-based binary classification avoids this pull toward the dry average \cite{ref16}.
+Most recent rainfall studies treat storm forecasting as continuous millimetre regression. That choice fails on skewed daily records. In a 10-year Kathmandu study (2015--2025), Poudyal \textit{et al.} \cite{ref1} evaluated Random Forest, Support Vector Regression, k-NN, and recurrent networks via root-mean-square error (RMSE) and mean absolute error (MAE), where equal weighting of dry and wet days caused their top regressor to compress real peaks above 17 mm/day down below 7 mm/day \cite{ref1,ref3}. An even starker failure occurred in Nurmayati's \cite{ref2} study of 52,703 ten-minute weather rows in South Tangerang, Indonesia. Because more than 90\% of intervals recorded 0 mm, Random Forest, SVM, and k-NN achieved tiny mean errors ($<0.10$ mm) by outputting near-zero rain all day---which gave negative $R^2$ values ($-0.062$ to $-14.378$) while random 10-fold splits leaked multi-hour storms across folds. Large neural forecast models like Pangu-Weather \cite{ref14} and GraphCast \cite{ref15} likewise damp local grid-cell extremes under average loss functions \cite{ref3}, whereas binary classification above a fixed percentile cutoff targets the tail directly \cite{ref16}.
 
 \subsection{Unsupervised Clustering and Imbalanced Classification}
-Several recent studies pair dimension reduction with clustering before training classifiers. Zhang, Liu, and Chen \cite{ref17} used PCA and K-Means++ to group correlated humidity, temperature, and pressure series into seasonal rainfall types, while FastICA separates sharp storm bursts from smooth yearly cycles. On imbalanced flood and rainfall datasets, comparative studies by Wu \textit{et al.} \cite{ref18}, Liu \textit{et al.} \cite{ref19}, and Toufique \textit{et al.} \cite{ref20} found that class-weighted models and bagged tree ensembles catch far more rare storm events than unweighted neighbour search when tested with date splits and Precision-Recall curves \cite{ref2,ref3}.
+Unsupervised regime analysis helps structure correlated weather tables before supervised training. Zhang, Liu, and Chen \cite{ref17} combined PCA with K-Means++ to sort humidity, temperature, and pressure records into seasonal rainfall regimes, while FastICA separates spiky non-Gaussian rain pulses from smooth annual waves. On skewed flood datasets, benchmarks by Wu \textit{et al.} \cite{ref18}, Liu \textit{et al.} \cite{ref19}, and Toufique \textit{et al.} \cite{ref20} show that class-weighted models and bagged tree ensembles detect far more rare storms than unweighted neighbour lookup when evaluated with date splits and Precision-Recall curves \cite{ref2,ref3}.
 
 \subsection{Identified Research Gaps}
-Three practical gaps stand out in the 2022--2026 literature. Under \textbf{RO1}, no Kathmandu study has paired a 30-year leak-free MERRA-2 pipeline with PCA, FastICA, and K-Means to measure what share of extreme storms falls inside a single monsoon weather regime. Under \textbf{RO2}, local studies have relied on continuous regression errors \cite{ref1} or random cross-validation \cite{ref2} rather than testing linear, single-tree, kernel, ensemble, and nearest-neighbour classifiers on unseen storm recall, probability reliability, and 7-component PCA compression. Under \textbf{RO3}, prior work in Nepal has not tuned warning cutoffs against an explicit missed-flood cost ratio or tested 24-hour advance warnings on the September 2024 Kathmandu flood. Addressing these three gaps directly motivates the experimental design in the following sections.
+Three specific gaps remain in the 2022--2026 Kathmandu literature. First (\textbf{RO1}), no prior work has run PCA, FastICA, and K-Means on a leak-free 30-year MERRA-2 archive to quantify how strongly Kathmandu storms concentrate inside one monsoon cluster. Second (\textbf{RO2}), existing local papers rely on regression loss \cite{ref1} or random cross-validation \cite{ref2} instead of benchmarking linear, single-tree, kernel, ensemble, and nearest-neighbour classifiers on unseen storm recall, Brier calibration, and 7-component PCA compression. Third (\textbf{RO3}), no study in Nepal has calibrated warning cutoffs against a 15-to-1 missed-flood cost or tested 24-hour advance warnings on the September 2024 Kathmandu flood. Those three gaps shape the methodology below.
 
 \section{Problem and Dataset Description}
 
 \subsection{Problem Definition and Significance}
-Continuous rainfall regressors pull storm peaks toward the dry majority average. To avoid that bias, this study frames extreme rainfall detection as binary classification above historical 95th-percentile thresholds ($P_{95} = 13.74$ mm/day across all days and $R95p = 22.75$ mm/day across wet days $\ge 1.0$ mm). Given 22 daily weather and past-rainfall features on day $t$, each classifier outputs a probability $\hat{p}_t \in [0, 1]$ that day $t$ reaches or exceeds the storm threshold. Reliable probability warnings at Tribhuvan International Airport and along the Bagmati river corridor give forecasters and municipal crews practical lead time to clear drains and warn riverside settlements before flooding starts.
+Dry days dominate the training loss. Continuous rainfall regressors therefore pull storm peaks down toward the dry average, whereas binary classification targets fixed 95th-percentile cutoffs directly ($P_{95} = 13.74$ mm/day across all days and $R95p = 22.75$ mm/day across wet days $\ge 1.0$ mm). Each classifier takes 22 daily weather and lagged-rainfall features on day $t$ and outputs a storm probability $\hat{p}_t \in [0, 1]$. Early probability alerts at Tribhuvan International Airport and along the Bagmati river corridor give forecasters and city crews time to clear drains before flooding starts.
 
 \subsection{Study Site and 30-Year Weather Dataset}
 
 \subsubsection{Kathmandu Airport Grid Cell and Seasonality}
-Daily weather records from 1 January 1995 to 31 December 2024 (10,958 raw days) were retrieved from the NASA Langley Research Center POWER archive (built from GMAO MERRA-2 reanalysis) for the $0.5^\circ \times 0.625^\circ$ grid cell centred at Tribhuvan International Airport ($27.697^\circ\text{N}, 85.359^\circ\text{E}$; $1,269.39\text{ m}$ elevation) \cite{ref4,ref13}. The airport sits on the central plateau of the Kathmandu Valley, where bowl-shaped mountain walls rising to 2,732 m at Shivapuri and 2,762 m at Phulchowki trap warm, moist air masses and force strong upward cloud growth. Local weather follows four distinct seasons across the year: a cold, dry winter from December to February driven by continental westerly flow; a hot pre-monsoon season from March to May marked by strong sunshine and afternoon thunderstorms; the wet South Asian summer monsoon from June to September, when low-pressure systems carry saturated air from the Bay of Bengal into the valley; and a cool post-monsoon transition in October and November. Fig.~\ref{fig:f1} maps the valley basin and monthly rainfall pattern, showing that 88.7\% of all extreme rain days occur during the June--September monsoon window, with July and August alone accounting for nearly two-thirds of historical cloudbursts.
+The NASA Langley Research Center POWER archive (GMAO MERRA-2 reanalysis) supplies 30 years of daily weather records (1 January 1995 to 31 December 2024; 10,958 raw days) for the $0.5^\circ \times 0.625^\circ$ grid cell at Tribhuvan International Airport ($27.697^\circ\text{N}, 85.359^\circ\text{E}$; $1,269.39\text{ m}$ elevation) \cite{ref4,ref13}. Steep mountain walls surround the valley floor. Peaks at Shivapuri (2,732 m) and Phulchowki (2,762 m) trap moist air over the central plateau and force strong upward cloud growth. Four seasons govern the yearly cycle: cold, dry winter weather from December to February under continental westerlies; hot pre-monsoon days from March to May with strong sunshine and afternoon thunder; the wet South Asian summer monsoon from June to September, when Bay of Bengal depressions pump saturated air into the basin; and cool post-monsoon weather in October and November. In Fig.~\ref{fig:f1}, 88.7\% of all extreme rain days fall between June and September, and July--August alone account for nearly two-thirds of historical cloudbursts.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\columnwidth]{figures/figure_01_location.png}
-\caption{Study domain showing the NASA POWER MERRA-2 grid cell centred at Tribhuvan International Airport within the Kathmandu Valley rim (left), alongside the 1995--2024 monthly mean rainfall and extreme event counts (right).}
+\caption{Study domain for the NASA POWER MERRA-2 grid cell centred at Tribhuvan International Airport within the Kathmandu Valley rim (left), alongside the 1995--2024 monthly mean rainfall and extreme event counts (right).}
 \label{fig:f1}
 \end{figure}
 
 \subsubsection{Chronological Train-Test Split and Data Quality Audit}
-Automated checks in the data processing script found zero missing calendar dates, zero duplicate rows, zero blank values, and zero negative rainfall entries across all 10,958 raw days. Dropping the first 7 dry winter days of January 1995 (1--7 January 1995, when daily rain did not exceed 0.16 mm) to start the 7-day past rainfall totals leaves $N = 10,951$ complete daily rows. A strict date split at 31 December 2018 divides these rows into an 80\% training set (1995--2018; 8,759 days) and a 20\% holdout test set (2019--2024; 2,192 days), as listed in Table~\ref{tab:t1}.
+Every calendar date from 1995 through 2024 is present. Automated checks in \texttt{data\_processing.py} confirmed zero missing dates, zero duplicate rows, zero blank entries, and zero negative rain values across all 10,958 raw days. Because the 7-day rolling rainfall totals need one week of prior history, the script trims the first 7 dry winter days of January 1995 (1--7 January 1995; maximum rain $0.16$ mm) and retains $N = 10,951$ complete rows. A strict date split at 31 December 2018 divides those rows into an 80\% training set (1995--2018; 8,759 days) and a 20\% holdout test set (2019--2024; 2,192 days; Table~\ref{tab:t1}).
 
 \begin{table}[H]
 \caption{CHRONOLOGICAL DATASET PARTITIONS, SAMPLE SIZES, AND EXTREME RAINFALL COUNTS}
@@ -174,7 +174,7 @@ Complete Modelling Set & 1995-01-08 to 2024-12-31 & 10,951 days (603 extremes, 5
 }
 \end{table}
 
-Table~\ref{tab:t2} summarises the 13 raw variables on the training set. In the raw NASA archive, 10 m wind direction (\texttt{WD10M}) records compass angles ($1.20^\circ$ to $359.90^\circ$) through 30 December 2012, but switches to negative calm-wind codes ($-8994.0$ to $-5404.0$) from 31 December 2012 onward; the pipeline records this condition with a binary indicator (\texttt{wind\_calm\_flag}) and leaves raw \texttt{WD10M} out of continuous scaling.
+Summary statistics for all 13 raw training variables appear in Table~\ref{tab:t2}. One archive anomaly required special care: 10 m wind direction (\texttt{WD10M}) logs normal compass degrees ($1.20^\circ$ to $359.90^\circ$) until 30 December 2012, then switches to negative calm-wind numbers ($-8994.0$ to $-5404.0$) from 31 December 2012 onward, so the preprocessing script captures that state with a binary flag (\texttt{wind\_calm\_flag}) and excludes raw \texttt{WD10M} from continuous z-score scaling.
 
 \begin{table}[H]
 \caption{RAW METEOROLOGICAL VARIABLES AND TRAINING SUMMARY STATISTICS (1995--2018, 8,759 DAYS)}
@@ -208,37 +208,37 @@ TS & $^\circ$C & Surface skin temperature & 18.46 $\pm$ 6.43 & 2.60 / 31.46 \\
 \subsection{Target Thresholds and Operational Classification Tasks}
 
 \subsubsection{Extreme Rainfall Thresholds (13.74 mm and 22.75 mm)}
-Both percentile cutoffs are computed strictly from the 1995--2018 training set \cite{ref3,ref4}. The all-day 95th percentile is $P_{95} = 13.74$ mm/day (439 training positives at 5.01\% and 164 test positives at 7.48\%), while the wet-day 95th percentile across days with $\ge 1.0$ mm of rain is $R95p = 22.75$ mm/day (148 training deluges at 1.69\% and 64 test deluges at 2.92\%), as shown in Fig.~\ref{fig:f2}.
+Both storm cutoffs come strictly from the 1995--2018 training partition \cite{ref3,ref4}. The all-day 95th percentile sits at $P_{95} = 13.74$ mm/day (439 training storms at 5.01\%; 164 holdout storms at 7.48\%), whereas the wet-day 95th percentile across days with $\ge 1.0$ mm of rain sits at $R95p = 22.75$ mm/day (148 training deluges at 1.69\%; 64 holdout deluges at 2.92\%; Fig.~\ref{fig:f2}).
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\columnwidth]{figures/figure_02_tail_distribution.png}
-\caption{Daily rainfall frequency distribution (left) and exceedance probability curves comparing the 1995--2018 training period against the 2019--2024 holdout period (right) at the 13.74 mm/day and 22.75 mm/day thresholds.}
+\caption{Daily rainfall frequency distribution (left) and exceedance probability curves for the 1995--2018 training period versus the 2019--2024 holdout period (right) at the 13.74 mm/day and 22.75 mm/day thresholds.}
 \label{fig:f2}
 \end{figure}
 
 \subsubsection{Operational Classification Tasks (Tasks A, B, and C)}
-Three operational tasks are tested across the 2019--2024 holdout period:
+Forecasters need both same-day diagnosis and 24-hour advance warning. Three tasks therefore run on the 2019--2024 holdout set:
 \begin{itemize}
   \setlength{\itemsep}{1.5pt}\setlength{\parskip}{0pt}
   \item \textbf{Task A (Same-Day Atmospheric Diagnosis, 13.74 mm/day):} Pairs 15 day-$t$ non-rainfall weather variables with 5 lagged rainfall predictors ($t-1$ to $t-7$) and 2 seasonal waves to classify same-day storms.
-  \item \textbf{Task B (Strict 24-Hour Advance Forecast, 13.74 mm/day):} Shifts all 15 weather variables back to day $t-1$ so forecasts rely strictly on measurements recorded at least 24 hours ahead.
-  \item \textbf{Task C (Severe Wet-Day Deluge Detection, 22.75 mm/day):} Identifies severe downpours exceeding $R95p = 22.75$ mm/day.
+  \item \textbf{Task B (Strict 24-Hour Advance Forecast, 13.74 mm/day):} Shifts all 15 weather variables back to day $t-1$. Every input comes from at least 24 hours earlier.
+  \item \textbf{Task C (Severe Wet-Day Deluge Detection, 22.75 mm/day):} Flags severe downpours at or above the wet-day 95th percentile ($R95p = 22.75$ mm/day).
 \end{itemize}
 
 \section{Methods and Experimental Setup}
 
 \subsection{Experimental Setup, Data Pre-Processing, and Feature Extraction}
-All data preparation, unsupervised grouping, and classifier training were built in Python 3 using \texttt{scikit-learn}, \texttt{NumPy}, \texttt{pandas}, and \texttt{SciPy} across three scripts: \texttt{data\_processing.py}, \texttt{train\_and\_evaluate.py}, and \texttt{run\_experiments.py}. Fig.~\ref{fig:f3} shows the six-stage leak-free workflow and the 5-fold expanding-window time-series validation schedule. Same-day rainfall (\texttt{PRECTOTCORR} on day $t$) is removed from all feature tables before fitting any model.
+Three Python 3 scripts run all experiments. Built on \texttt{scikit-learn}, \texttt{NumPy}, \texttt{pandas}, and \texttt{SciPy}, \texttt{data\_processing.py}, \texttt{train\_and\_evaluate.py}, and \texttt{run\_experiments.py} execute the six-stage workflow and 5-fold expanding-window time-series validation schedule in Fig.~\ref{fig:f3} after stripping same-day rainfall (\texttt{PRECTOTCORR} on day $t$) from every feature table.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\columnwidth]{figures/figure_03_workflow_cv.png}
-\caption{Leak-free data preparation and evaluation workflow (left) and the 5-fold expanding-window time-series validation schedule applied strictly within the 1995--2018 training set (right).}
+\caption{Leak-free data preparation and evaluation workflow (left) and the 5-fold expanding-window time-series validation schedule within the 1995--2018 training set (right).}
 \label{fig:f3}
 \end{figure}
 
-From the 13 raw series, the preprocessing function builds the 22 predictors listed in Table~\ref{tab:t3}. Four derived surface indicators track storm-cloud conditions: daily temperature range (\texttt{T2M\_MAX} minus \texttt{T2M\_MIN}, which narrows sharply when thick monsoon clouds block daytime sun and trap nighttime warmth), dew-point spread (\texttt{T2M} minus \texttt{T2MDEW}, measuring how close surface air is to 100\% saturation), 24-hour pressure change (today's minus yesterday's surface pressure, tracking falling pressure ahead of monsoon lows), and the binary calm-wind flag. Five past-rainfall features (\texttt{precip\_lag1}, \texttt{precip\_lag2}, \texttt{precip\_lag3}, \texttt{precip\_roll3}, and \texttt{precip\_roll7}) are computed after shifting the daily rainfall column backward by one full day. Rolling 3-day and 7-day totals therefore sum strictly over days $t-1$ through $t-7$ to represent prior valley soil wetness. Sine and cosine waves of the calendar day of year (\texttt{sin\_doy}, \texttt{cos\_doy}) track the yearly monsoon cycle smoothly across December--January boundaries. For Task B (24-hour advance forecasting), all 15 day-$t$ weather predictors are replaced by their day-$(t-1)$ values. For scale-sensitive models (PCA, FastICA, K-Means, Logistic Regression, RBF-SVM, and k-NN), continuous features are standardised inside each training fold by subtracting that fold's training mean and dividing by its training standard deviation, putting all predictors on a common zero-mean, unit-variance scale without leaking future test numbers.
+Table~\ref{tab:t3} lists the 22 engineered predictors. Four surface indicators capture cloud and pressure changes: daily temperature range (\texttt{T2M\_MAX} minus \texttt{T2M\_MIN}, which narrows when thick monsoon clouds block afternoon sun and trap nighttime warmth), dew-point spread (\texttt{T2M} minus \texttt{T2MDEW}, which measures the gap to 100\% air saturation), 24-hour pressure change (today's minus yesterday's surface pressure), and the binary calm-wind flag. Five past-rainfall predictors (\texttt{precip\_lag1}, \texttt{precip\_lag2}, \texttt{precip\_lag3}, \texttt{precip\_roll3}, and \texttt{precip\_roll7}) use a strict 1-day backward shift so the 3-day and 7-day sums cover only days $t-1$ through $t-7$. Sine and cosine waves of the calendar day (\texttt{sin\_doy}, \texttt{cos\_doy}) track the annual cycle. Task B lags all 15 weather predictors to day $t-1$. Scale-sensitive models (PCA, FastICA, K-Means, Logistic Regression, RBF-SVM, and k-NN) standardise continuous columns inside each training fold to zero mean and unit variance using only that fold's training statistics.
 
 \begin{table}[H]
 \caption{INVENTORY OF THE 22 ENGINEERED WEATHER PREDICTORS}
@@ -279,33 +279,33 @@ From the 13 raw series, the preprocessing function builds the 22 predictors list
 \subsection{Unsupervised Pattern Analysis and Clustering Methods (RO1)}
 
 \subsubsection{Principal Component Analysis (PCA)}
-Three engineered columns in Table~\ref{tab:t3} are exact differences or sums of other columns (daily temperature range, dew-point spread, and 3-day rolling rain), creating exact overlap among the 22 predictors. PCA is applied here for two practical tasks: removing this overlap under RO1 and building a compact set of uncorrelated axes to test whether dimension reduction hurts rare storm detection under RO2 \cite{ref17}. Within the unsupervised module, a 22-component PCA model (random seed 42) is fitted strictly on the standardised $8,759 \times 22$ training table without seeing rainfall labels or holdout test rows. Components are kept in order of their variance share until the running total reaches at least 90\% of total training variance; seven components ($m = 7$) meet this 90\% rule, retaining 91.46\% of variation across the 22 features. Both the 8,759-day training table and the 2,192-day holdout table are then projected onto those 7 training axes so RO2 classifiers can be tested directly on the 7-component compressed table versus all 22 physical features.
+Three columns in Table~\ref{tab:t3} are exact sums or differences of other columns. Because daily temperature range, dew-point spread, and 3-day rolling rain overlap linearly with their parent variables, PCA removes that redundancy under RO1 and builds an orthogonal subspace for the RO2 ablation test \cite{ref17}. A 22-component PCA model (seed 42) fits strictly on the standardised $8,759 \times 22$ training matrix without access to storm labels or 2019--2024 holdout rows. Seven axes ($m = 7$) pass the 90\% variance rule at 91.46\% cumulative variance. Both training and holdout tables then project onto those 7 fixed training axes.
 
 \subsubsection{Fast Independent Component Analysis (FastICA)}
-While PCA groups variables by overall seasonal variation, sudden cloudbursts and archive code changes stand out as sharp spikes rather than smooth bell-shaped waves. FastICA is therefore run in the training script as an unsupervised diagnostic tool for RO1 to separate sharp rainfall bursts from smooth yearly cycles and the post-2012 wind-direction code shift. Configured with 7 components, a log-cosh contrast function, 500 maximum iterations, and random seed 42 on the 7-component whitened training table, the algorithm rotates the axes to find signals with the sharpest spikes (measured by kurtosis across each extracted axis). This step supports RO1 by checking whether extreme rain days isolate along a single sharp-peaked axis while showing why unitless rotated axes are harder for duty forecasters to read than physical weather thresholds.
+Cloudbursts arrive as sharp spikes rather than smooth bell-shaped waves. While PCA groups variables by broad seasonal variance, FastICA runs on the 7-component whitened training table (7 sources, log-cosh contrast, 500 maximum iterations, seed 42) to separate non-Gaussian rainfall pulses from the post-2012 wind-direction code shift under RO1. The algorithm rotates the whitened axes to maximise excess kurtosis along each extracted source. This diagnostic checks whether multi-day rain bursts isolate on a single high-kurtosis axis and shows why unitless rotated sources are harder for duty forecasters to interpret than physical thresholds.
 
 \subsubsection{K-Means Clustering}
-To test whether daily valley weather naturally falls into distinct seasonal groups under RO1, K-Means clustering divides the 8,759 unlabelled training days into $K$ clusters \cite{ref17}. Inside the unsupervised module, K-Means is run with 10 random starting centres and seed 42 across candidate cluster counts $K \in \{2, 3, 4, 5, 6\}$ on the standardised training table, grouping days by minimising the total squared distance between each day and its assigned cluster centre. Both the Silhouette score ($N = 8,759$) and the Davies--Bouldin index are checked at each $K$ to pick the best cluster count ($K = 3$) objectively rather than guessing the number of seasons. Once cluster labels are assigned from the unlabelled weather features, the script compares each cluster against historical storm labels and converts the cluster centres back into original physical units ($\text{g/kg}$, $^\circ\text{C}$, $\text{kPa}$, $\text{mm}$), showing what share of extreme storms lands inside the wet monsoon cluster and how many non-extreme wet days remain inside that same cluster.
+K-Means clustering partitions the 8,759 unlabelled training days into $K$ seasonal regimes under RO1 \cite{ref17}. Across candidate counts $K \in \{2, 3, 4, 5, 6\}$ (10 random restarts, seed 42), the algorithm assigns each standardised training day to the nearest cluster centre by squared Euclidean distance. Both the full-sample Silhouette score ($N = 8,759$) and the Davies--Bouldin index score each $K$. Those two metrics select $K = 3$ objectively. After convergence, the script converts the cluster centres back into physical units ($\text{g/kg}$, $^\circ\text{C}$, $\text{kPa}$, $\text{mm}$) and cross-tabulates the clusters against historical storm labels to measure storm concentration inside the monsoon regime.
 
 \subsection{Supervised Classification Algorithms (RO2 and RO3)}
 
 \subsubsection{Logistic Regression}
-Can a single weighted straight-line boundary separate extreme monsoon downpours from ordinary wet days? Logistic Regression tests this baseline question under RO2 and serves as the high-sensitivity screening model under RO3 \cite{ref18}. In the tuning module, the classifier is built inside a leak-free pipeline that pairs in-fold z-score scaling with L2-penalised Logistic Regression using the LBFGS solver, balanced class weights, 1,000 maximum iterations, and seed 42. Keeping the scaler inside the pipeline ensures that each validation fold calculates its own feature averages and spreads strictly from past training rows. Because non-extreme days outnumber extreme storm days by 19 to 1 ($8,320$ vs. $439$), balanced class weighting gives each storm day a weight of $w_1 = 9.98$ and each non-extreme day a weight of $w_0 = 0.53$ during training so the model pays equal total attention to both classes. Five-fold expanding time-series grid search over penalty strengths $C \in \{0.01, 0.1, 1.0, 10.0\}$ selects $C = 0.01$ for Task A (and $C = 0.1$ for Tasks B and C). Strong L2 regularisation ($C = 0.01$) keeps correlated moisture variables (specific humidity, relative humidity, and dew point) from getting unstable weights and lets the model work as a fast moisture-surge detector under RO2 and RO3.
+Logistic Regression provides the linear baseline for RO2 and the high-sensitivity moisture screen for RO3 \cite{ref18}. Each validation fold runs z-score scaling inside a pipeline before fitting L2-penalised Logistic Regression (LBFGS solver, 1,000 maximum iterations, seed 42) so test statistics never leak backward. Non-extreme days outnumber training storms by 19 to 1 ($8,320$ vs. $439$). Balanced class weights therefore multiply storm errors by $w_1 = 9.98$ and non-extreme errors by $w_0 = 0.53$ during training. Five-fold expanding time-series grid search over $C \in \{0.01, 0.1, 1.0, 10.0\}$ selects $C = 0.01$ for Task A ($C = 0.1$ for Tasks B and C), where strong L2 shrinkage keeps correlated humidity variables from taking unstable weights.
 
 \subsubsection{Decision Tree (CART)}
-Single decision trees split weather variables using step-by-step threshold rules rather than a single linear formula \cite{ref16}. In this study, the Classification and Regression Tree (CART) algorithm is applied as a transparent rule baseline for RO2 to see how greedy Gini impurity splitting behaves when one lag variable (yesterday's rainfall) is strongly tied to multi-day monsoon wet spells. Because tree splits do not change when features are rescaled, the CART classifier is fitted with balanced class weights and seed 42 directly on the unscaled table so every split rule stays readable in real units ($\text{mm/day}$, $^\circ\text{C}$, $\text{kPa}$). To stop the tree from memorising isolated 1-day rain spikes in 1995--2018, 5-fold time-series grid search tests 45 settings across maximum tree depths of 3, 4, 5, 6, and 8, minimum node split sizes of 10, 20, and 50, and minimum leaf sizes of 5, 10, and 20, selecting a maximum depth of 8, minimum split of 10, and minimum leaf size of 5. Recording CART's feature importance scores directly supports RO2 by showing how heavily a single tree leans on yesterday's rain compared with a multi-tree ensemble.
+Decision trees partition weather predictors through hierarchical threshold rules rather than a single linear equation \cite{ref16}. Here, the Classification and Regression Tree (CART) algorithm serves as an interpretable rule baseline under RO2 to test how greedy Gini impurity splitting behaves when yesterday's rain dominates multi-day monsoon wet spells. Monotone feature scaling does not alter tree split points. CART therefore trains directly on the unscaled physical matrix (balanced class weights, seed 42) so every node threshold stays in native units ($\text{mm/day}$, $^\circ\text{C}$, $\text{kPa}$), while a 45-point expanding 5-fold time-series search over depths $\{3, 4, 5, 6, 8\}$, minimum split sizes $\{10, 20, 50\}$, and minimum leaf sizes $\{5, 10, 20\}$ selects depth 8, minimum split 10, and minimum leaf 5 to prevent overfitting.
 
 \subsubsection{Radial Basis Function Support Vector Machine (RBF-SVM)}
-Curved interactions between valley temperature, falling air pressure, and high humidity often separate routine showers from severe cloudbursts \cite{ref2}. RBF-SVM is applied under RO2 to test whether a smooth curved kernel boundary improves storm detection and probability reliability over linear and single-tree models. In the training script, it is built as an in-fold scaling pipeline combining z-score standardisation with a balanced-weight RBF support vector classifier. In-fold z-score scaling is required because RBF kernel distances depend on squared differences across all 22 columns. Five-fold time-series grid search tests penalty values $C \in \{0.5, 1.0, 2.0\}$ with automatic kernel width scaling, selecting $C = 1.0$. Internal 5-fold Platt sigmoid calibration is turned on to convert raw boundary distances into calibrated probability estimates, giving a probability reliability benchmark (Brier score) for RO2 and threshold sweeps for RO3.
+Nonlinear interactions among valley temperature, falling pressure, and humidity govern storm onset \cite{ref2}. RBF-SVM tests whether a curved Gaussian kernel boundary improves storm separation and probability calibration over linear and single-tree models under RO2. Because radial basis distances depend on squared differences across all 22 predictors, each fold pairs z-score scaling with a balanced-weight RBF support vector classifier and tunes $C \in \{0.5, 1.0, 2.0\}$ via 5-fold time-series grid search ($C = 1.0$ selected). Internal 5-fold Platt sigmoid scaling converts margin distances into calibrated probabilities.
 
 \subsubsection{Random Forest}
-Greedy single trees lean too heavily on yesterday's rainfall and often miss the first day of a storm. Random Forest is implemented as the main ensemble classifier for RO2 and the primary operational warning model for RO3 to fix that single-variable trap by combining bootstrap tree averaging (bagging) with random feature selection at every split \cite{ref1,ref18,ref19}. Fitted with balanced class weights and seed 42 on the unscaled physical table, each tree is grown on an independent bootstrap sample of the 8,759 training days while limiting each node split to $\lfloor\sqrt{22}\rfloor = 4$ randomly chosen candidate features. In roughly four out of five node splits, yesterday's rainfall is not among the 4 sampled candidates. Those splits must instead use specific humidity, dew point, relative humidity, 3-day rain accumulation, or daily temperature range, allowing the forest to catch both sudden first-day cloudbursts and multi-day deluges. Five-fold time-series tuning across 100 or 150 trees, maximum depths of 4, 6, or 8, and minimum leaf sizes of 5 or 10 selects 100 trees with maximum depth 8 and minimum leaf size 5, averaging out single-tree noise while keeping storm probabilities sharp.
+Single trees overfit yesterday's rain. Random Forest overcomes that single-variable trap for RO2 and RO3 by combining bootstrap tree averaging with random feature subsets at every node split \cite{ref1,ref18,ref19}. Each tree grows on an independent bootstrap sample of the 8,759 unscaled training days (balanced class weights, seed 42) and checks only $\lfloor\sqrt{22}\rfloor = 4$ randomly drawn candidate predictors per split, so yesterday's rain (\texttt{precip\_lag1}) is absent from roughly four out of five candidate draws and those splits must instead build rules from specific humidity, dew point, relative humidity, 3-day rain totals, or daily temperature range. Five-fold tuning selects 100 trees, depth 8, and minimum leaf size 5.
 
 \subsubsection{k-Nearest Neighbours (k-NN)}
-Weather analog forecasting assumes that if today's 22-variable weather state looks like $k$ historical days, today's rainfall outcome will follow the majority vote of those $k$ past days \cite{ref2,ref20}. The k-NN algorithm is built inside an in-fold z-score scaling pipeline to test this analog idea under RO2. Time-series tuning tests neighbour counts $k \in \{5, 9, 15, 21\}$ and equal-vote versus distance-weighted rules, selecting $k = 5$ with equal voting (and testing $k = 5$ on the 7-component PCA table in the RO2 comparison). Running k-NN on the Kathmandu archive provides a direct test of the accuracy paradox: because straight-line distance treats all 22 standardised features equally without class weighting, and because non-extreme days outnumber storms 7-to-1 even inside the wet monsoon cluster, local neighbour voting is tested directly against class-weighted classifiers.
+Weather analog forecasting predicts today's rain from the majority vote of the $k$ closest historical weather days \cite{ref2,ref20}. An in-fold z-score scaled k-NN pipeline tests this approach under RO2 across $k \in \{5, 9, 15, 21\}$ and uniform versus distance weights, where 5-fold time-series validation selects $k = 5$ with uniform voting (also tested on the 7 PCA axes). Unweighted k-NN illustrates the accuracy paradox directly. Because non-extreme days outnumber storms 7-to-1 even inside the wet monsoon cluster, Euclidean neighbour voting in 22 dimensions favours the dry majority.
 
 \subsection{Validation, Runtimes, and Cost-Sensitive Threshold Design}
-All five classifiers are tuned via 5-fold expanding-window time-series cross-validation on the 1995--2018 training set (validation fold length $\approx 1,459$ days) optimising out-of-fold $F_1$-score. Table~\ref{tab:t4} records training fit times and 2,192-day test prediction speeds across all eight algorithms.
+Five-fold expanding-window time-series cross-validation inside the 1995--2018 training set (validation fold length $\approx 1,459$ days) tunes all five classifiers by out-of-fold $F_1$-score, and Table~\ref{tab:t4} compares their fit and test speeds.
 
 \begin{table}[H]
 \caption{TRAINING RUNTIMES, TEST INFERENCE SPEED, AND SCALING BEHAVIOUR ACROSS ALL EIGHT ALGORITHMS}
@@ -329,18 +329,18 @@ k-NN (5 neighbours) & Instant storage; slow test distance scan & 0.0024 s & 0.07
 }
 \end{table}
 
-Table~\ref{tab:t5} lists the 5-fold cross-validation search grids and selected configurations. Holdout performance on 2019--2024 is measured using Precision, Recall, harmonic $F_1$-score, and the Brier calibration score (BS):
+Search grids appear in Table~\ref{tab:t5}, while Precision, Recall, harmonic $F_1$-score, and the Brier calibration score (BS) measure holdout skill across the 2,192 days of 2019--2024:
 \begin{equation}
 \begin{aligned}
 \text{Prec} &= \frac{\text{TP}}{\text{TP}+\text{FP}}, \quad \text{Rec} = \frac{\text{TP}}{\text{TP}+\text{FN}}, \\
 F_1 &= \frac{2\,\text{TP}}{2\,\text{TP}+\text{FP}+\text{FN}}, \quad \text{BS} = \frac{1}{N}\sum_{i=1}^{N}(\hat{p}_i - y_i)^2
 \end{aligned}
 \end{equation}
-alongside 1,000-resample 7-day moving-block bootstrap 95\% confidence intervals and paired McNemar chi-square tests. For RO3, out-of-fold training probability predictions are gathered across the 5 expanding folds and tested across cutoffs $\tau \in [0.05, 0.95]$ under a 15-to-1 missed-flood cost function:
+Block bootstrap intervals and McNemar tests check significance. Across the 5 expanding training folds, out-of-fold storm probability predictions evaluate candidate cutoffs $\tau \in [0.05, 0.95]$ for RO3 under a 15-to-1 missed-flood cost function:
 \begin{equation}
 \text{Cost}(\tau) = 15 \times \text{FN}(\tau) + 1 \times \text{FP}(\tau)
 \end{equation}
-selecting the operational cutoff $\tau^*_{\text{CV}} = 0.30$ strictly from training folds before holdout testing.
+which selects the operational cutoff $\tau^*_{\text{CV}} = 0.30$ strictly from training folds before holdout testing.
 
 \begin{table}[H]
 \caption{FIVE-FOLD TIME-SERIES CROSS-VALIDATION SEARCH GRIDS AND SELECTED MODEL CONFIGURATIONS}
@@ -366,7 +366,7 @@ k-NN & Neighbours: 5, 9, 15, 21; uniform/distance & 5 neighbours, uniform voting
 \subsection{Unsupervised Regime Findings (RO1)}
 
 \subsubsection{Optimal Cluster Selection}
-Testing K-Means across $K \in \{2, 3, 4, 5, 6\}$ on the standardised 1995--2018 training table (8,759 days) shows that three clusters best fit the valley's annual weather cycle. As plotted in Fig.~\ref{fig:f4}, within-cluster sum of squares (WCSS) drops sharply from $129.0 \times 10^3$ at $K=2$ to a clear elbow at $98.1 \times 10^3$ for $K=3$, while the full-sample Silhouette score rises from 0.2923 ($K=2$) to its global peak of 0.3119 ($K=3$) and the Davies--Bouldin index reaches its global minimum of 1.1327. Using only $K=2$ clusters is too coarse because it merges cool winter days and hot pre-monsoon days into one broad dry group. Splitting the data into $K=4, 5,$ or $6$ clusters steadily worsens cluster quality (Silhouette falling to 0.2856, 0.2312, and 0.2017, while Davies--Bouldin climbs to 1.4883 at $K=5$) because extra clusters artificially chop up transitional dry days rather than isolating storm days. Selecting $K=3$ therefore aligns both statistical cluster quality and Kathmandu's three physical weather regimes (dry winter, hot pre-monsoon, and wet monsoon).
+Three clusters best fit Kathmandu's annual cycle across $K \in \{2, 3, 4, 5, 6\}$ on the 1995--2018 training set (Fig.~\ref{fig:f4}). Within-cluster sum of squares (WCSS) drops sharply from $129.0 \times 10^3$ at $K=2$ to an elbow at $98.1 \times 10^3$ for $K=3$, while the full-sample Silhouette score peaks at 0.3119 ($K=3$ vs. 0.2923 at $K=2$) and the Davies--Bouldin index hits its minimum of 1.1327. Two clusters are too coarse: $K=2$ merges cold winter days and hot pre-monsoon days into one dry group. Higher counts ($K=4, 5,$ or $6$) steadily degrade separation (Silhouette drops to 0.2856, 0.2312, and 0.2017; Davies--Bouldin climbs to 1.4883 at $K=5$) because extra centroids split dry transitional days rather than isolating storms. Three regimes match dry winter, hot pre-monsoon, and wet monsoon weather.
 
 \begin{figure}[H]
 \centering
@@ -376,31 +376,31 @@ Testing K-Means across $K \in \{2, 3, 4, 5, 6\}$ on the standardised 1995--2018 
 \end{figure}
 
 \subsubsection{PCA and FastICA Component Structure}
-Fig.~\ref{fig:f5} and Fig.~\ref{fig:f6} show the component patterns found by PCA and FastICA. In Fig.~\ref{fig:f5} (left) and Fig.~\ref{fig:f6} (left), PC1 accounts for 42.29\% of training variance ($\lambda_1 = 9.30$), with strong positive weights on specific humidity (\texttt{QV2M}, $+0.313$), dew point (\texttt{T2MDEW}, $+0.307$), minimum temperature (\texttt{T2M\_MIN}, $+0.282$), relative humidity (\texttt{RH2M}, $+0.265$), and 7-day rain ($+0.261$), and negative weights on surface pressure (\texttt{PS}, $-0.245$) and daily temperature range ($-0.233$). PC2 explains 24.17\% of variance ($\lambda_2 = 5.32$; 66.46\% combined in 2D), tracking pre-monsoon wind speed ($+0.360$), maximum temperature ($+0.357$), and solar radiation ($+0.332$).
+Two principal axes capture 66.46\% of total variance across the 22 training predictors (Fig.~\ref{fig:f5}, left; Fig.~\ref{fig:f6}, left). PC1 explains 42.29\% of training variance ($\lambda_1 = 9.30$) and represents monsoon moisture build-up with positive loadings on specific humidity (\texttt{QV2M}, $+0.313$), dew point (\texttt{T2MDEW}, $+0.307$), minimum temperature (\texttt{T2M\_MIN}, $+0.282$), relative humidity (\texttt{RH2M}, $+0.265$), and 7-day rain ($+0.261$) against negative loadings on surface pressure (\texttt{PS}, $-0.245$) and daily temperature range ($-0.233$). PC2 adds 24.17\% ($\lambda_2 = 5.32$) from pre-monsoon wind speed ($+0.360$), maximum temperature ($+0.357$), and solar radiation ($+0.332$).
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\columnwidth]{figures/figure_05_pca_ica_projections.png}
-\caption{Two-dimensional projections of the 22-feature training set coloured by extreme rainfall status: PCA projection capturing 66.46\% of variance (left) and FastICA independent source projection (right).}
+\caption{Two-dimensional projections of the 22-feature training set by extreme rainfall status: PCA projection with 66.46\% variance (left) and FastICA independent source projection (right).}
 \label{fig:f5}
 \end{figure}
 
-PC3 explains 9.15\% of variance ($\lambda_3 = 2.01$), driven by 3-day and 2-day rain memory ($+0.440$ and $+0.407$). Keeping $m = 7$ components captures 91.46\% of variance (and $m = 9$ captures 95.11\%). In Fig.~\ref{fig:f5} (right), FastICA separates the post-2012 calm-wind code shift on IC1 ($\kappa = -0.66$) from sharp multi-day storm spikes on IC2 ($\kappa = +18.60$).
+Rain memory drives PC3 ($\lambda_3 = 2.01$). Its top loadings fall on 3-day and 2-day rain lags ($+0.440$ and $+0.407$; 9.15\% variance), while seven PCA axes retain 91.46\% of total variance (95.11\% at nine axes; Fig.~\ref{fig:f6}, left) and FastICA separates the post-2012 calm-wind shift on IC1 ($\kappa = -0.66$) from sharp multi-day storm pulses on IC2 ($\kappa = +18.60$; Fig.~\ref{fig:f5}, right).
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\columnwidth]{figures/figure_06_pca_scree_kmeans_radar.png}
-\caption{PCA explained variance scree plot showing 91.46\% retention at 7 components (left), paired with the K-Means (3 clusters) radar profile across eight core weather variables (right).}
+\caption{PCA explained variance scree plot with 91.46\% retention at 7 components (left), paired with the K-Means (3 clusters) radar profile across eight core weather variables (right).}
 \label{fig:f6}
 \end{figure}
 
 \subsubsection{Physical Profiles of the Three Weather Regimes}
-Table~\ref{tab:t6} and Fig.~\ref{fig:f6} (right) summarise the average weather conditions and storm counts across the three K-Means clusters on 1995--2018:
+Average weather conditions and storm counts across the three K-Means clusters appear in Table~\ref{tab:t6} and Fig.~\ref{fig:f6} (right):
 \begin{itemize}
   \setlength{\itemsep}{1.5pt}\setlength{\parskip}{0pt}
-  \item \textbf{Cluster 0 (Dry Winter / Post-Monsoon, 3,395 days, 38.76\%):} Cool, high-pressure dry air ($13.90^\circ\text{C}$, $\text{QV2M} = 5.57\text{ g/kg}$, $\text{PS} = 87.63\text{ kPa}$, 7-day rain $= 2.28\text{ mm}$) with only 14 extreme rain days (0.41\% storm rate; 3.19\% of training storms).
-  \item \textbf{Cluster 1 (Hot Pre-Monsoon Transitional, 2,067 days, 23.60\%):} Warm, dry, sunny days ($22.56^\circ\text{C}$, $\text{RH2M} = 34.02\%$, daily temperature range $= 13.02^\circ\text{C}$, solar radiation $= 22.82\text{ MJ/m}^2\text{/d}$) with just 8 storms (0.39\% rate; 1.82\% of storms).
-  \item \textbf{Cluster 2 (Active Saturated Monsoon, 3,297 days, 37.64\%):} Warm, humid monsoon air ($\text{QV2M} = 15.85\text{ g/kg}$, $\text{RH2M} = 80.92\%$, $\text{T2MDEW} = 18.76^\circ\text{C}$, daily temperature range $= 6.80^\circ\text{C}$, $\text{PS} = 86.95\text{ kPa}$, 7-day rain $= 42.26\text{ mm}$) capturing \textbf{94.99\% of all training storms} (417 of 439 events). Because 2,880 days inside Cluster 2 (87.35\%) are non-extreme wet days, supervised models are still needed to separate cloudbursts from ordinary monsoon showers.
+  \item \textbf{Cluster 0 (Dry Winter / Post-Monsoon, 3,395 days, 38.76\%):} Cool, high-pressure dry air ($13.90^\circ\text{C}$, $\text{QV2M} = 5.57\text{ g/kg}$, $\text{PS} = 87.63\text{ kPa}$, 7-day rain $= 2.28\text{ mm}$). Only 14 storms fall here (0.41\% rate; 3.19\% of training storms).
+  \item \textbf{Cluster 1 (Hot Pre-Monsoon Transitional, 2,067 days, 23.60\%):} Warm, sunny dry weather ($22.56^\circ\text{C}$, $\text{RH2M} = 34.02\%$, daily temperature range $= 13.02^\circ\text{C}$, solar radiation $= 22.82\text{ MJ/m}^2\text{/d}$) with just 8 storms (0.39\% rate; 1.82\% of storms).
+  \item \textbf{Cluster 2 (Active Saturated Monsoon, 3,297 days, 37.64\%):} Warm, humid low-pressure monsoon air ($\text{QV2M} = 15.85\text{ g/kg}$, $\text{RH2M} = 80.92\%$, $\text{T2MDEW} = 18.76^\circ\text{C}$, daily range $= 6.80^\circ\text{C}$, $\text{PS} = 86.95\text{ kPa}$, 7-day rain $= 42.26\text{ mm}$). This single cluster holds \textbf{94.99\% of all training storms} (417 of 439), yet 2,880 of its days (87.35\%) are ordinary wet days that still require supervised classification.
 \end{itemize}
 
 \begin{table}[H]
@@ -431,7 +431,7 @@ Extreme Rain Days (Rate) & 14 (0.41\%) & 8 (0.39\%) & \textbf{417 (12.65\%)} & 4
 \subsection{Supervised Classifier Comparison (RO2)}
 
 \subsubsection{Holdout Test Performance Across All Five Models}
-Table~\ref{tab:t7} reports holdout test metrics across all five classifiers on the unseen 2019--2024 partition (2,192 days; 164 extreme rain days, or 7.48\% prevalence) at the default $\tau = 0.50$ cutoff. Fig.~\ref{fig:f7}, Fig.~\ref{fig:f8}, and Fig.~\ref{fig:f9} show the corresponding ROC curves, Precision-Recall curves, and holdout confusion matrices.
+Holdout testing covers 2019--2024. Across those 2,192 unseen days (164 extreme rain days, or 7.48\% storm prevalence), Table~\ref{tab:t7}, Fig.~\ref{fig:f7}, Fig.~\ref{fig:f8}, and Fig.~\ref{fig:f9} compare all five classifiers at the default $\tau = 0.50$ cutoff through their test metrics, ROC curves, Precision-Recall curves, and confusion matrices.
 
 \begin{table}[H]
 \caption{HOLDOUT TEST PERFORMANCE ACROSS ALL FIVE SUPERVISED CLASSIFIERS (2019--2024, 2,192 DAYS, 164 EXTREMES, CUTOFF 0.50)}
@@ -461,7 +461,7 @@ True Negatives (Correct Dry) & 1,505 & 1,636 & 1,589 & 1,665 & \textbf{1,995} \\
 \end{table}
 
 \subsubsection{Random Forest: Best Overall Operational Balance}
-Random Forest leads all five classifiers in balanced storm detection. On the 2019--2024 holdout set, it posts the highest $F_1$-score (0.4385; 7-day block-bootstrap 95\% CI of $[38.17\%, 49.14\%]$) and the highest Precision-Recall AUC (0.5517, more than 7.3 times higher than the 0.0748 random baseline), alongside an ROC-AUC of 0.9349, 82.71\% accuracy, and 90.24\% recall (catching 148 of 164 extreme storms and missing 16; Table~\ref{tab:t7}). Averaging 100 trees with 4-feature random split selection keeps false alarms down to 363 while retaining fast test prediction speed (0.0290 s across 2,192 days).
+Random Forest ranks first in balanced storm skill. Across the 2019--2024 holdout test set (Table~\ref{tab:t7}), the 100-tree ensemble records the top $F_1$-score at 0.4385 (7-day block-bootstrap 95\% CI: $[38.17\%, 49.14\%]$) and top Precision-Recall AUC at 0.5517 (over 7.3 times the 0.0748 baseline) and catches 148 of 164 storms (90.24\% recall; 16 missed) at 82.71\% accuracy, 0.9349 ROC-AUC, 363 false alarms, and a 0.0290 s test runtime.
 
 \begin{figure}[H]
 \centering
@@ -473,31 +473,31 @@ Random Forest leads all five classifiers in balanced storm detection. On the 201
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.94\columnwidth]{figures/figure_08_pr_curves.png}
-\caption{Precision-Recall curves on the 2019--2024 holdout test set against the 7.48\% storm prevalence baseline, showing Random Forest (0.5517) and Logistic Regression (0.5478) achieving over a seven-fold gain above random chance.}
+\caption{Precision-Recall curves on the 2019--2024 holdout test set against the 7.48\% storm prevalence baseline, where Random Forest (0.5517) and Logistic Regression (0.5478) achieve over a seven-fold gain above random chance.}
 \label{fig:f8}
 \end{figure}
 
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=0.90\textwidth]{figures/figure_09_confusion_matrices.png}
-\caption{Holdout confusion matrices across all five classifiers (2019--2024, 2,192 days: 2,028 non-extreme, 164 extreme) showing raw counts and row percentages.}
+\caption{Holdout confusion matrices across all five classifiers (2019--2024, 2,192 days: 2,028 non-extreme, 164 extreme) with raw counts and row percentages.}
 \label{fig:f9}
 \end{figure*}
 
 \subsubsection{Logistic Regression: Maximum Storm Sensitivity}
-Class-weighted Logistic Regression achieves the highest default-cutoff recall of 96.34\%, catching 158 of 164 holdout storms and missing only 6 events across the 6-year test window, while also posting the top ROC-AUC (0.9411) and second-highest Precision-Recall AUC (0.5478). Because a flat linear boundary cannot curve around warm, humid monsoon break days, it generates 523 false alarms (160 more than Random Forest), resulting in 23.20\% precision and an $F_1$-score of 0.3740.
+Balanced Logistic Regression catches more default-cutoff storms than any other model. Across the 6-year holdout window, it detects 158 of 164 storms (96.34\% recall; only 6 missed) and posts the highest ROC-AUC (0.9411) alongside a 0.5478 Precision-Recall AUC, though its flat linear boundary triggers 523 false alarms on warm, humid monsoon break days (23.20\% precision; $F_1 = 0.3740$).
 
 \subsubsection{Decision Tree (CART): Rule Baseline and Single-Variable Reliance}
-The single tuned CART decision tree reaches 81.07\% overall accuracy, 85.98\% storm recall (catching 141 of 164 storms and missing 23), 26.45\% precision (392 false alarms), and the second-highest $F_1$-score of 0.4046 (ROC-AUC $= 0.8718$, PR-AUC $= 0.4068$). Compared with CART, Random Forest's 100-tree ensemble catches 7 additional extreme storms while cutting 29 false alarms and raising PR-AUC by 14.49 percentage points (from 0.4068 to 0.5517).
+A single tuned CART tree ranks second in $F_1$-score at 0.4046. On the holdout set, CART reaches 81.07\% accuracy, 85.98\% recall (141 storms caught, 23 missed), 26.45\% precision (392 false alarms), 0.8718 ROC-AUC, and 0.4068 PR-AUC; Random Forest's 100-tree ensemble beats this single tree by catching 7 more storms and cuts 29 false alarms and lifting PR-AUC by 14.49 percentage points.
 
 \subsubsection{RBF-SVM: Strong Calibration but Lower Precision-Recall Skill}
-RBF-SVM detects 144 of 164 holdout storms (87.80\% recall, 439 false alarms, $F_1 = 0.3855$, ROC-AUC $= 0.9011$) and records the lowest Brier calibration error (0.0553) thanks to internal Platt scaling. However, its Precision-Recall AUC (0.3676) trails both Random Forest (0.5517) and Logistic Regression (0.5478) due to high-probability false alarms on humid days, and it requires the longest training time (10.45 s).
+Platt-scaled RBF-SVM posts the lowest Brier calibration error (0.0553) of all five models. It catches 144 of 164 holdout storms (87.80\% recall, 439 false alarms, $F_1 = 0.3855$, ROC-AUC $= 0.9011$), but high-probability false alarms on humid non-storm days pull its Precision-Recall AUC down to 0.3676 and kernel fitting takes 10.45 s.
 
 \subsubsection{k-Nearest Neighbours: Demonstration of the Accuracy Paradox}
-Unweighted k-NN ($k=5$) exposes the danger of judging imbalanced flood models by overall accuracy. Although k-NN posts the highest overall accuracy (93.16\%) and precision (58.75\%), it misses 117 out of 164 extreme storms (28.66\% recall, catching only 47 events; Fig.~\ref{fig:f9}). Because 92.52\% of holdout days are non-extreme, a trivial rule that predicts ``no storm'' every day reaches 92.52\% accuracy while catching zero floods.
+Overall accuracy misleads on skewed flood data. Unweighted k-NN ($k=5$) tops Table~\ref{tab:t7} in overall accuracy (93.16\%) and precision (58.75\%), yet it misses 117 of 164 holdout storms (28.66\% recall; only 47 caught in Fig.~\ref{fig:f9}) because 92.52\% of test days are non-extreme.
 
 \subsubsection{Feature Importance and Physical Drivers}
-Why does Random Forest beat a single CART tree? Table~\ref{tab:t8} and Fig.~\ref{fig:f10} answer that question by comparing top-10 feature rankings across Random Forest Gini importance, CART Gini importance, standardised Logistic Regression weights, and holdout permutation drops. Checking all 22 predictors greedily at every split causes CART to put 73.35\% of its total weight on yesterday's rain (\texttt{precip\_lag1}) while giving 0.00\% to specific humidity (\texttt{QV2M}) and 7-day rain (\texttt{precip\_roll7}). Limiting each Random Forest split to 4 random candidate features spreads weight across multi-day rainfall memory (\texttt{precip\_lag1} at 20.83\%, \texttt{precip\_roll3} at 11.55\%, \texttt{precip\_roll7} at 5.24\%), air moisture (\texttt{QV2M} at 10.37\%, \texttt{T2MDEW} at 9.36\%, \texttt{RH2M} at 5.43\%, \texttt{dew\_point\_depression} at 5.12\%), and cloud cooling (\texttt{temp\_diurnal\_range} at 7.00\%, \texttt{ALLSKY\_SW} at 4.41\%). Logistic Regression weights and permutation drops tell the same physical story: yesterday's rain ($\beta = +0.4969$) and relative humidity ($\beta = +0.4679$) push storm risk up, whereas bright sunshine ($\beta = -0.5355$) and wide daily temperature ranges ($\beta = -0.4886$) point to clear skies.
+Feature rankings in Table~\ref{tab:t8} and Fig.~\ref{fig:f10} show why Random Forest beats a single CART tree. Because CART checks all 22 columns greedily at every split, it puts 73.35\% of its Gini weight on yesterday's rain (\texttt{precip\_lag1}) and 0.00\% on specific humidity (\texttt{QV2M}) and 7-day rain (\texttt{precip\_roll7}). Random Forest draws only 4 random candidate columns per split. Weight spreads across multi-day rain memory (\texttt{precip\_lag1} 20.83\%, \texttt{precip\_roll3} 11.55\%, \texttt{precip\_roll7} 5.24\%), water vapour (\texttt{QV2M} 10.37\%, \texttt{T2MDEW} 9.36\%, \texttt{RH2M} 5.43\%, \texttt{dew\_point\_depression} 5.12\%), and cloud cooling (\texttt{temp\_diurnal\_range} 7.00\%, \texttt{ALLSKY\_SW} 4.41\%), while Logistic Regression weights confirm that yesterday's rain ($\beta = +0.4969$) and relative humidity ($\beta = +0.4679$) raise storm risk and sunshine ($\beta = -0.5355$) and wide temperature ranges ($\beta = -0.4886$) favour dry skies.
 
 \begin{table}[H]
 \caption{TOP-10 WEATHER PREDICTOR IMPORTANCE RANKINGS ACROSS MODELS}
@@ -531,16 +531,16 @@ Why does Random Forest beat a single CART tree? Table~\ref{tab:t8} and Fig.~\ref
 \end{figure}
 
 \subsubsection{Probability Calibration and Subspace Ablation}
-Fig.~\ref{fig:f11} plots reliability diagrams and holdout Brier scores across all five classifiers. Platt-scaled RBF-SVM (0.0553) and unweighted k-NN (0.0560) record the lowest raw Brier scores because their probability outputs stay near the 7.48\% average storm rate, whereas balanced class weighting in Random Forest (0.1154), CART (0.1418), and Logistic Regression (0.1621) pushes probabilities higher to avoid missing floods.
+Reliability curves and Brier scores in Fig.~\ref{fig:f11} show how class weighting shifts predicted probabilities. Platt-scaled RBF-SVM (0.0553) and unweighted k-NN (0.0560) post the smallest raw Brier errors because their predictions cluster near the 7.48\% base rate, whereas balanced class weights in Random Forest (0.1154), CART (0.1418), and Logistic Regression (0.1621) lift storm probabilities upward to prevent missed floods.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.94\columnwidth]{figures/figure_11_calibration_reliability.png}
-\caption{Probability calibration curves across all five classifiers on the 2019--2024 holdout test set (left) and Brier score comparison showing the effect of balanced class weighting versus Platt scaling (right).}
+\caption{Probability calibration curves across all five classifiers on the 2019--2024 holdout test set (left) and Brier score comparison between balanced class weighting and Platt scaling (right).}
 \label{fig:f11}
 \end{figure}
 
-Table~\ref{tab:t9} presents paired McNemar tests (Part A) and the 7-component PCA comparison (Part B). Across the 164 holdout storms, Random Forest catches 101 storms missed by k-NN while k-NN catches zero storms missed by Random Forest ($\chi^2 = 99.01, p < 10^{-30}$). Replacing the 22 physical predictors with the 7 PCA components lowers Logistic Regression recall from 96.34\% to 93.29\% ($F_1$ from 0.3740 to 0.3562) and lowers k-NN recall from 28.66\% to 24.39\% ($F_1$ from 0.3852 to 0.3265).
+Paired McNemar tests confirm these gaps (Table~\ref{tab:t9}, Part A). Across the 164 holdout storms, Random Forest catches 101 events missed by k-NN while k-NN catches zero events missed by Random Forest ($\chi^2 = 99.01, p < 10^{-30}$), and replacing the 22 physical predictors with the 7 PCA components (Part B) lowers recall from 96.34\% to 93.29\% for Logistic Regression ($F_1$: 0.3740 to 0.3562) and from 28.66\% to 24.39\% for k-NN ($F_1$: 0.3852 to 0.3265).
 
 \begin{table}[H]
 \caption{PAIRED MCNEMAR SIGNIFICANCE TESTS AND 7-COMPONENT PCA VERSUS 22-FEATURE ABLATION (2019--2024 TEST SET)}
@@ -571,7 +571,7 @@ k-NN (7 PCA Modes, 91.5\%) & 92.47 & 24.39 & 0.3265 & 0.8159 / 0.3053 \\
 \subsection{Operational and Flood Case Study Results (RO3)}
 
 \subsubsection{Cost-Sensitive Threshold Optimisation}
-Default 0.50 cutoffs treat missed floods and false alarms equally. Table~\ref{tab:t10} lists Random Forest performance across probability cutoffs under the 15-to-1 penalty ($\text{Cost} = 15\,\text{FN} + 1\,\text{FP}$), where $\tau = 0.50$ misses 16 storms and produces 363 false alarms (cost $= 603$).
+A standard 0.50 cutoff penalises missed floods and false alarms equally. Under the 15-to-1 operational cost rule ($\text{Cost} = 15\,\text{FN} + 1\,\text{FP}$; Table~\ref{tab:t10}), the default $\tau = 0.50$ Random Forest threshold misses 16 holdout storms and triggers 363 false alarms for a total penalty of 603.
 
 \begin{table}[H]
 \caption{RANDOM FOREST COST-SENSITIVE THRESHOLD SWEEP UNDER THE 15-TO-1 MISSED-STORM PENALTY (2019--2024 TEST SET)}
@@ -595,17 +595,17 @@ Default 0.50 cutoffs treat missed floods and false alarms equally. Table~\ref{ta
 }
 \end{table}
 
-As plotted in Fig.~\ref{fig:f12}, lowering the cutoff to the leak-free out-of-fold threshold $\tau^*_{\text{CV}} = 0.30$ (selected strictly on 1995--2018 training folds) lifts holdout recall from 90.24\% to \textbf{98.17\%} (161 of 164 storms caught), cutting missed floods by 81.25\% (from 16 down to 3) and reducing total disaster cost from 603 to 550. The post-hoc test minimum occurs at $\tau^* = 0.40$ (157 of 164 storms caught; cost $= 532$), reported only as a retrospective reference.
+In Fig.~\ref{fig:f12}, the training-tuned threshold $\tau^*_{\text{CV}} = 0.30$ lifts holdout recall from 90.24\% to \textbf{98.17\%} (161 of 164 storms caught), cuts missed floods by 81.25\% (from 16 down to 3), and drops total disaster cost from 603 to 550. The post-hoc test minimum sits at $\tau^* = 0.40$ (cost $= 532$).
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.94\columnwidth]{figures/figure_12_threshold_cost_sweep.png}
-\caption{Random Forest precision, recall, and F1 trade-off curves across probability cutoffs (left) and the 15-to-1 disaster cost curve comparing the training-derived 0.30 threshold against the 0.40 test minimum and 0.50 default cutoff (right).}
+\caption{Random Forest precision, recall, and F1 trade-off curves across probability cutoffs (left) and the 15-to-1 disaster cost curve for the training-derived 0.30 threshold versus the 0.40 test minimum and 0.50 default cutoff (right).}
 \label{fig:f12}
 \end{figure}
 
 \subsubsection{Retrospective Validation on the September 2024 Flood}
-First-day storm onset poses the hardest test. Fig.~\ref{fig:f13} tracks daily rainfall and predicted probabilities across the 20--30 September 2024 Kathmandu flood \cite{ref6,ref7}, where four days of light rain (0.39 to 1.14 mm/day on 20--23 September; Random Forest $\hat{p} \le 0.1831$) preceded a sudden five-day deluge of 47.54, 55.89, 16.56, 76.28, and 93.26 mm/day on 24--28 September (289.53 mm total). On 24 September, when yesterday's rain was just 0.58 mm, same-day Logistic Regression immediately flagged the jump in relative humidity (90.47\%) and compressed daily temperature range ($3.66^\circ\text{C}$) at $\hat{p} = 0.7154$. Once 1-day and 3-day rain lags engaged across 25--28 September, both Random Forest ($\hat{p} = 0.7189, 0.6992, 0.6973, 0.6881$) and Logistic Regression ($\hat{p} = 0.9962, 0.9939, 0.8674, 0.9997$) issued sustained flood warnings well above 0.30 and 0.50.
+Day-1 storm onset is the toughest test for any flood model. Four days of light showers (0.39 to 1.14 mm/day on 20--23 September 2024; Random Forest $\hat{p} \le 0.1831$) preceded five days of extreme rain at 47.54, 55.89, 16.56, 76.28, and 93.26 mm/day across 24--28 September (289.53 mm total; Fig.~\ref{fig:f13}) \cite{ref6,ref7}. Yesterday's rain stood at just 0.58 mm on 24 September, yet same-day Logistic Regression caught the sharp rise in relative humidity (90.47\%) and narrow daily temperature range ($3.66^\circ\text{C}$) at $\hat{p} = 0.7154$; from 25 to 28 September, 1-day and 3-day rain lags pushed both Random Forest ($\hat{p} = 0.6881$ to $0.7189$) and Logistic Regression ($\hat{p} = 0.8674$ to $0.9997$) well above the 0.30 and 0.50 alert lines.
 
 \begin{figure}[H]
 \centering
@@ -615,7 +615,7 @@ First-day storm onset poses the hardest test. Fig.~\ref{fig:f13} tracks daily ra
 \end{figure}
 
 \subsubsection{24-Hour Advance Forecasting and Wet-Day Benchmarks}
-Table~\ref{tab:t11} and Fig.~\ref{fig:f14} compare holdout performance across Task A (same-day atmospheric state at 13.74 mm/day), Task B (strict 24-hour advance forecasting with all 15 atmospheric variables lagged to $t-1$), and Task C (severe wet-day deluges above 22.75 mm/day). At a strict 24-hour lead time (Task B), Random Forest posts the highest $F_1$-score (0.4097) and ROC-AUC (0.9135), catching 144 of 164 storms a full day ahead (87.80\% recall, only 2.44 percentage points below Task A), while Logistic Regression catches 152 of 164 storms 24 hours ahead (92.68\% recall, PR-AUC $= 0.4526$). Unweighted k-NN drops to 17.68\% recall on Task B (missing 135 of 164 storms). On Task C (64 holdout deluges $\ge 22.75$ mm/day), Logistic Regression catches 62 of 64 events (96.88\% recall, ROC-AUC $= 0.9461$) and Random Forest catches 57 of 64 (89.06\% recall, ROC-AUC $= 0.9276$).
+Lead-time and wet-day sensitivity tests appear in Table~\ref{tab:t11} and Fig.~\ref{fig:f14}. Under strict 24-hour advance forecasting (Task B, where all 15 atmospheric predictors shift back to day $t-1$), Random Forest leads in $F_1$-score (0.4097) and ROC-AUC (0.9135) and catches 144 of 164 holdout storms a full day ahead (87.80\% recall, just 2.44 points below same-day Task A), while Logistic Regression flags 152 of 164 storms 24 hours ahead (92.68\% recall, PR-AUC $= 0.4526$). Unweighted k-NN falls to 17.68\% recall on Task B (135 storms missed). For severe wet-day deluges $\ge 22.75$ mm/day (Task C, 64 holdout events), Logistic Regression detects 62 of 64 deluges (96.88\% recall, ROC-AUC $= 0.9461$) and Random Forest detects 57 of 64 (89.06\% recall, ROC-AUC $= 0.9276$).
 
 \begin{table}[H]
 \caption{COMPARISON OF SAME-DAY CLASSIFICATION (TASK A), STRICT 24-HOUR ADVANCE FORECASTING (TASK B), AND WET-DAY DELUGE DETECTION (TASK C)}
@@ -650,39 +650,39 @@ Table~\ref{tab:t11} and Fig.~\ref{fig:f14} compare holdout performance across Ta
 \subsection{Subspace Compression, the Accuracy Paradox, and Ensemble Complementarity}
 
 \subsubsection{Effect of PCA Compression on Storm Signals}
-The experimental results connect the unsupervised regime findings (RO1) directly to classifier behaviour (RO2). Although 7 PCA components keep 91.46\% of total variation across the 22 predictors, training classifiers on those 7 components cuts storm recall by 3.05 percentage points for Logistic Regression and 4.27 percentage points for k-NN (Table~\ref{tab:t9}). PCA ranks components by overall variation across the entire year, so the top components weight smooth winter-to-summer temperature and humidity shifts heavily while averaging out sharp 1-day jumps in yesterday's rain (\texttt{precip\_lag1}) and daily temperature range (\texttt{temp\_diurnal\_range}) that warn of sudden cloudbursts \cite{ref16,ref17}. Retaining all 22 physical predictors therefore preserves the short-term storm signals that orthogonal variance compression discards.
+Orthogonal variance compression hurts rare-storm recall. Even though 7 PCA axes retain 91.46\% of training variance across the 22 predictors, training on those 7 axes lowers holdout recall by 3.05 percentage points for Logistic Regression and 4.27 points for k-NN (Table~\ref{tab:t9}). Because PCA orders axes by full-year variance, its leading components favour smooth seasonal temperature and humidity waves while smoothing out abrupt 1-day jumps in yesterday's rain (\texttt{precip\_lag1}) and cloud-cooled daily temperature range (\texttt{temp\_diurnal\_range}) \cite{ref16,ref17}. Full 22-feature tables keep those short-term storm triggers intact.
 
 \subsubsection{Why Unweighted k-NN Suffers the Accuracy Paradox}
-Distance voting fails for a simple geometric reason. On the 2019--2024 holdout set, unweighted k-NN posts 93.16\% overall accuracy yet misses 71.34\% of same-day storms (Table~\ref{tab:t7}) and 82.32\% of next-day storms (Table~\ref{tab:t11}), refuting earlier urban flood claims \cite{ref2}. Inside Cluster 2 (Active Saturated Monsoon), which holds 94.99\% of training storms, 87.35\% of days are still non-extreme wet days (Table~\ref{tab:t6}), so the 5 nearest historical neighbours of a developing storm almost always belong to the non-extreme monsoon majority.
+Local neighbour voting fails because non-extreme wet days outnumber cloudbursts inside the monsoon season itself. Unweighted k-NN reaches 93.16\% overall accuracy on 2019--2024 yet misses 71.34\% of same-day storms (Table~\ref{tab:t7}) and 82.32\% of 24-hour storms (Table~\ref{tab:t11}), which contradicts earlier urban flood claims \cite{ref2}. Inside Cluster 2 (Active Monsoon; Table~\ref{tab:t6}), where 94.99\% of training storms occur, 87.35\% of days are still ordinary wet days, so the 5 closest historical neighbours of a developing storm almost always vote for non-extreme rain.
 
 \subsubsection{Complementary Strengths of Random Forest and Logistic Regression}
-Random Forest and class-weighted Logistic Regression instead solve different parts of the warning problem. A single CART tree puts 73.35\% of its split weight on \texttt{precip\_lag1} (Table~\ref{tab:t8}), acting mainly as a persistence detector that lags on the first day of a storm. By limiting each node split to 4 random candidate features, Random Forest spreads weight across 3-day rain totals, specific humidity, dew point, and daily temperature range, cutting 160 false alarms relative to Logistic Regression. Balanced Logistic Regression acts as an immediate moisture-surge detector: on 24 September 2024, when prior rain was near zero, Logistic Regression flagged the abrupt onset ($\hat{p} = 0.7154$), while both models locked onto the 25--28 September deluge peak.
+Random Forest and balanced Logistic Regression cover distinct operational needs. A single CART tree puts 73.35\% of its split weight on \texttt{precip\_lag1} (Table~\ref{tab:t8}) and lags on Day 1 of a storm. By restricting each split to 4 random candidate columns, Random Forest spreads weight across 3-day rain totals, specific humidity, dew point, and daily temperature range and cuts 160 false alarms compared with Logistic Regression, whereas balanced Logistic Regression acts as an immediate moisture-surge screen that caught the sudden 24 September 2024 onset ($\hat{p} = 0.7154$) before both models locked onto the 25--28 September peak.
 
 \subsection{Three-Tier Operational Flood Warning Protocol}
-To turn these findings into a practical workflow for Tribhuvan International Airport and municipal flood engineers without causing public alert fatigue, the interactive dashboard (Appendix~D) implements a three-tier warning protocol:
+To balance early storm detection against false-alarm fatigue at Tribhuvan International Airport and municipal drainage offices, the prototype dashboard (Appendix~D) uses a three-step alert ladder:
 \begin{itemize}
   \setlength{\itemsep}{1.5pt}\setlength{\parskip}{0pt}
-  \item \textbf{Tier 1 -- Yellow Watch (Internal Forecaster Screening):} Triggered 24 hours ahead when Task B Logistic Regression reaches $\hat{p} \ge 0.50$ (92.68\% recall) or same day when Task A Random Forest reaches the 15:1 cost-calibrated cutoff $\tau^*_{\text{CV}} = 0.30$ (98.17\% recall, 161 of 164 storms). Alerts stay inside the meteorological office for radar and gauge monitoring.
-  \item \textbf{Tier 2 -- Orange Standby (Municipal Preparedness):} Triggered when same-day Random Forest reaches $\hat{p} \ge 0.40$ or Logistic Regression reaches $\hat{p} \ge 0.70$ (95.73\% recall, flagging the 24 September 2024 onset), placing municipal drainage teams and airport ground staff on standby.
-  \item \textbf{Tier 3 -- Red Escalation (High-Priority Flood Warning):} Triggered when Random Forest exceeds $\hat{p} \ge 0.68$ and Logistic Regression exceeds $\hat{p} \ge 0.85$ simultaneously (capturing the 25--28 September 2024 peak), paired with real-time ground gauge confirmation.
+  \item \textbf{Tier 1 -- Yellow Watch (Internal Forecaster Screening):} Starts 24 hours ahead when Task B Logistic Regression hits $\hat{p} \ge 0.50$ (92.68\% recall) or same day when Task A Random Forest reaches the 15:1 cutoff $\tau^*_{\text{CV}} = 0.30$ (98.17\% recall; 161 of 164 storms). Forecasters monitor radar and gauges internally.
+  \item \textbf{Tier 2 -- Orange Standby (Municipal Preparedness):} Starts when same-day Random Forest hits $\hat{p} \ge 0.40$ or Logistic Regression hits $\hat{p} \ge 0.70$ (95.73\% recall, which catches the 24 September 2024 onset) and puts city drainage crews and airport staff on standby.
+  \item \textbf{Tier 3 -- Red Escalation (High-Priority Flood Warning):} Starts when Random Forest exceeds $\hat{p} \ge 0.68$ and Logistic Regression exceeds $\hat{p} \ge 0.85$ together (25--28 September 2024 peak) alongside live rain-gauge confirmation.
 \end{itemize}
 
 \subsection{Ethical, Legal, and Methodological Limitations}
-Operational flood warning carries strict professional and legal duties under the British Computer Society (BCS) Code of Conduct. Flood damage in Kathmandu falls heaviest on low-income riverside settlements (\textit{Sukumbasi} communities) along the Bagmati and Bishnumati corridors \cite{ref6,ref7}. Deploying an accuracy-optimised k-NN model that misses over 71\% of floods would leave riverside residents unwarned, whereas unverified public alarms would cause panic and warning fatigue. Under Nepal's \textit{Disaster Risk Reduction and Management Act, 2074 (2017)}, legal authority to issue public flood warnings belongs solely to the Department of Hydrology and Meteorology (DHM) and the National Disaster Risk Reduction and Management Authority \cite{ref6}; the present dashboard is therefore built strictly for qualified meteorologists. Methodologically, a single $0.5^\circ \times 0.625^\circ$ ($\sim 50$ km) MERRA-2 grid cell averages rainfall over the valley (recording 93.26 mm/day on 28 September 2024 versus $>240$ mm at point gauges \cite{ref6,ref7}), daily totals do not resolve 1-hour cloudburst intensity, and surface features omit upper-air wind divergence and river routing.
+Public-interest duties under the British Computer Society (BCS) Code of Conduct govern flood warning deployment. Low-income riverside settlements (\textit{Sukumbasi} communities) along the Bagmati and Bishnumati corridors face the highest flood exposure in Kathmandu \cite{ref6,ref7}: an accuracy-tuned k-NN model that misses 71\% of floods would leave those households unwarned, while unverified public alarms would trigger panic. Nepal's \textit{Disaster Risk Reduction and Management Act, 2074 (2017)} assigns sole legal authority for public flood warnings to the Department of Hydrology and Meteorology (DHM) and the National Disaster Risk Reduction and Management Authority \cite{ref6}, so this dashboard serves professional meteorologists only. Three technical limits also remain: one $0.5^\circ \times 0.625^\circ$ ($\sim 50$ km) MERRA-2 grid box smooths local peaks (93.26 mm/day on 28 September 2024 vs. $>240$ mm at point gauges \cite{ref6,ref7}), daily totals mask 1-hour cloudburst rates, and surface variables omit upper-air wind divergence.
 
 \subsection{Conclusions}
 
 \subsubsection{Achievement of RO1: Data and Unsupervised Regime Analysis}
-A 30-year leak-free MERRA-2 weather archive (10,951 post-lag days and 22 predictors) was built for the Tribhuvan International Airport grid cell, handling post-2012 calm-wind codes cleanly, shifting rolling rain sums strictly to past days ($t-1$ to $t-7$), and splitting at 31 December 2018 (8,759 training and 2,192 holdout days) around training-only thresholds (13.74 and 22.75 mm/day). PCA kept 91.46\% of variance in 7 components, FastICA isolated sharp rain bursts, and K-Means ($K=3$, Silhouette $= 0.3119$, Davies--Bouldin $= 1.1327$) grouped 94.99\% (417 of 439) of training storms into the Active Saturated Monsoon cluster.
+The 30-year MERRA-2 pipeline (10,951 post-lag days; 22 predictors) fulfilled RO1. It isolated post-2012 calm-wind codes, restricted rolling rain sums to past days ($t-1$ to $t-7$), and split the record at 31 December 2018 (8,759 train and 2,192 holdout days) around training-only thresholds (13.74 and 22.75 mm/day), while 7 PCA axes kept 91.46\% of variance, FastICA separated sharp rain pulses, and K-Means ($K=3$, Silhouette $= 0.3119$) placed 94.99\% (417 of 439) of training storms inside the Active Monsoon cluster.
 
 \subsubsection{Achievement of RO2: Comparative Classifier Evaluation}
-Across five classifiers tuned via 5-fold time-series cross-validation, Random Forest achieved the best balanced holdout skill ($F_1 = 0.4385$, PR-AUC $= 0.5517$, ROC-AUC $= 0.9349$, 90.24\% recall, catching 148 of 164 storms) by breaking CART's 73.35\% single-variable reliance on yesterday's rain and spreading weight across 3-day rain, specific humidity, dew point, and cloud cooling. Class-weighted Logistic Regression reached the highest storm sensitivity (96.34\% recall, catching 158 of 164 storms, ROC-AUC $= 0.9411$), Platt-scaled RBF-SVM posted the lowest Brier error (0.0553), and unweighted k-NN exposed the accuracy paradox (93.16\% accuracy but 28.66\% recall, missing 117 of 164 floods).
+Five classifiers competed under 5-fold time-series cross-validation for RO2. Random Forest achieved the best balanced holdout skill ($F_1 = 0.4385$, PR-AUC $= 0.5517$, ROC-AUC $= 0.9349$, 90.24\% recall; 148 of 164 storms) by breaking CART's 73.35\% reliance on yesterday's rain, whereas balanced Logistic Regression reached 96.34\% recall (158 of 164 storms; ROC-AUC $= 0.9411$), Platt-scaled RBF-SVM posted the lowest Brier error (0.0553), and unweighted k-NN exposed the accuracy paradox (93.16\% accuracy but 28.66\% recall).
 
 \subsubsection{Achievement of RO3: Operational and Cost-Sensitive Validation}
-Calibrating the Random Forest cutoff to $\tau^*_{\text{CV}} = 0.30$ on training folds under a 15-to-1 missed-flood penalty raised holdout recall from 90.24\% to 98.17\% (catching 161 of 164 storms, cutting missed floods from 16 to 3, and lowering cost from 603 to 550). Strong warning skill held at a 24-hour lead time (Task B: Random Forest recall 87.80\%, $F_1 = 0.4097$; Logistic Regression recall 92.68\%) and on deluges $\ge 22.75$ mm/day (Task C: Logistic Regression recall 96.88\%, Random Forest 89.06\%), flagging both the 24 September 2024 onset and 25--28 September flood peak.
+Cost-sensitive threshold calibration satisfied RO3. At the training-tuned Random Forest cutoff $\tau^*_{\text{CV}} = 0.30$ under a 15-to-1 missed-flood penalty, holdout recall rose from 90.24\% to 98.17\% (161 of 164 storms caught, missed floods cut from 16 to 3, and cost reduced from 603 to 550), while high recall held at a 24-hour lead time (Task B: Random Forest 87.80\%, Logistic Regression 92.68\%), on wet-day deluges $\ge 22.75$ mm/day (Task C: Logistic Regression 96.88\%), and across the 24--28 September 2024 Kathmandu flood.
 
 \subsubsection{Directions for Future Work}
-Future work should combine gridded MERRA-2 predictors with hourly DHM ground rain-gauge records and weather radar across the Kathmandu Valley rim to capture sub-daily cloudburst intensity. Linking calibrated Random Forest and Logistic Regression storm probabilities with hydraulic river-stage routing models for the Bagmati and Bishnumati basins will further strengthen neighbourhood-level flood warning.
+Sub-daily cloudbursts require finer spatial resolution. Future work should pair MERRA-2 predictors with hourly DHM rain gauges, valley weather radar, and hydraulic river-routing models for the Bagmati and Bishnumati basins.
 
 \begin{thebibliography}{20}
 \scriptsize\raggedright
@@ -747,38 +747,38 @@ Future work should combine gridded MERRA-2 predictors with hourly DHM ground rai
 \noindent
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.395\textheight,keepaspectratio]{../figures/data_processing1.png}
+    \includegraphics[width=\textwidth,height=0.395\textheight,keepaspectratio]{figures/data_processing1.png}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.395\textheight,keepaspectratio]{../figures/data_processing2.png}
+    \includegraphics[width=\textwidth,height=0.395\textheight,keepaspectratio]{figures/data_processing2.png}
 \end{minipage}\par
 \vspace{14mm}
 \noindent
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.395\textheight,keepaspectratio]{../figures/data_processing3.png}
+    \includegraphics[width=\textwidth,height=0.395\textheight,keepaspectratio]{figures/data_processing3.png}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.395\textheight,keepaspectratio]{../figures/data_processing4.png}
+    \includegraphics[width=\textwidth,height=0.395\textheight,keepaspectratio]{figures/data_processing4.png}
 \end{minipage}\par
 \clearpage
 
 \noindent
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{../figures/data_processing5.png}
+    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{figures/data_processing5.png}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{../figures/data_processing6.png}
+    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{figures/data_processing6.png}
 \end{minipage}\par
 \vspace{16mm}
 \noindent
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{../figures/data_processing7.png}
+    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{figures/data_processing7.png}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
@@ -792,59 +792,59 @@ Future work should combine gridded MERRA-2 predictors with hourly DHM ground rai
 \noindent
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.42\textheight,keepaspectratio]{../figures/train_and_evaluate1.png}
+    \includegraphics[width=\textwidth,height=0.42\textheight,keepaspectratio]{figures/train_and_evaluate1.png}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.42\textheight,keepaspectratio]{../figures/train_and_evaluate2.png}
+    \includegraphics[width=\textwidth,height=0.42\textheight,keepaspectratio]{figures/train_and_evaluate2.png}
 \end{minipage}\par
 \vspace{15mm}
 \noindent
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.42\textheight,keepaspectratio]{../figures/train_and_evaluate3.png}
+    \includegraphics[width=\textwidth,height=0.42\textheight,keepaspectratio]{figures/train_and_evaluate3.png}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.42\textheight,keepaspectratio]{../figures/train_and_evaluate4.png}
+    \includegraphics[width=\textwidth,height=0.42\textheight,keepaspectratio]{figures/train_and_evaluate4.png}
 \end{minipage}\par
 \clearpage
 
 \noindent
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{../figures/train_and_evaluate5.png}
+    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{figures/train_and_evaluate5.png}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{../figures/train_and_evaluate6.png}
+    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{figures/train_and_evaluate6.png}
 \end{minipage}\par
 \vspace{16mm}
 \noindent
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{../figures/train_and_evaluate7.png}
+    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{figures/train_and_evaluate7.png}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{../figures/train_and_evaluate8.png}
+    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{figures/train_and_evaluate8.png}
 \end{minipage}\par
 \clearpage
 
 \noindent
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{../figures/train_and_evaluate9.png}
+    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{figures/train_and_evaluate9.png}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{../figures/train_and_evaluate10.png}
+    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{figures/train_and_evaluate10.png}
 \end{minipage}\par
 \vspace{16mm}
 \noindent
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{../figures/train_and_evaluate11.png}
+    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{figures/train_and_evaluate11.png}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
@@ -858,80 +858,80 @@ Future work should combine gridded MERRA-2 predictors with hourly DHM ground rai
 \noindent
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.42\textheight,keepaspectratio]{../figures/generate_figures1.png}
+    \includegraphics[width=\textwidth,height=0.42\textheight,keepaspectratio]{figures/generate_figures1.png}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.42\textheight,keepaspectratio]{../figures/generate_figures2.png}
+    \includegraphics[width=\textwidth,height=0.42\textheight,keepaspectratio]{figures/generate_figures2.png}
 \end{minipage}\par
 \vspace{15mm}
 \noindent
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.42\textheight,keepaspectratio]{../figures/generate_figures3.png}
+    \includegraphics[width=\textwidth,height=0.42\textheight,keepaspectratio]{figures/generate_figures3.png}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.42\textheight,keepaspectratio]{../figures/generate_figures4.png}
+    \includegraphics[width=\textwidth,height=0.42\textheight,keepaspectratio]{figures/generate_figures4.png}
 \end{minipage}\par
 \clearpage
 
 \noindent
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{../figures/generate_figures5.png}
+    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{figures/generate_figures5.png}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{../figures/generate_figures6.png}
+    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{figures/generate_figures6.png}
 \end{minipage}\par
 \vspace{16mm}
 \noindent
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{../figures/generate_figures7.png}
+    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{figures/generate_figures7.png}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{../figures/generate_figures8.png}
+    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{figures/generate_figures8.png}
 \end{minipage}\par
 \clearpage
 
 \noindent
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{../figures/generate_figures9.png}
+    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{figures/generate_figures9.png}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{../figures/generate_figures10.png}
+    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{figures/generate_figures10.png}
 \end{minipage}\par
 \vspace{16mm}
 \noindent
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{../figures/generate_figures11.png}
+    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{figures/generate_figures11.png}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{../figures/generate_figures12.png}
+    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{figures/generate_figures12.png}
 \end{minipage}\par
 \clearpage
 
 \noindent
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{../figures/generate_figures13.png}
+    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{figures/generate_figures13.png}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{../figures/generate_figures14.png}
+    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{figures/generate_figures14.png}
 \end{minipage}\par
 \vspace{16mm}
 \noindent
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{../figures/generate_figures15.png}
+    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{figures/generate_figures15.png}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
@@ -942,17 +942,17 @@ Future work should combine gridded MERRA-2 predictors with hourly DHM ground rai
 \noindent
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{../figures/generate_figures16.png}
+    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{figures/generate_figures16.png}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{../figures/generate_figures17.png}
+    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{figures/generate_figures17.png}
 \end{minipage}\par
 \vspace{16mm}
 \noindent
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{../figures/generate_figures18.png}
+    \includegraphics[width=\textwidth,height=0.44\textheight,keepaspectratio]{figures/generate_figures18.png}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.488\textwidth}\vspace{0pt}
     \centering
@@ -966,31 +966,31 @@ Future work should combine gridded MERRA-2 predictors with hourly DHM ground rai
 \noindent
 \begin{minipage}[t]{0.49\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.27\textheight,keepaspectratio]{../figures/dashboard1.png}
+    \includegraphics[width=\textwidth,height=0.27\textheight,keepaspectratio]{figures/dashboard1.png}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.49\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.27\textheight,keepaspectratio]{../figures/dashboard2.png}
+    \includegraphics[width=\textwidth,height=0.27\textheight,keepaspectratio]{figures/dashboard2.png}
 \end{minipage}\par
 \vspace{18mm}
 \noindent
 \begin{minipage}[t]{0.49\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.27\textheight,keepaspectratio]{../figures/dashboard3.png}
+    \includegraphics[width=\textwidth,height=0.27\textheight,keepaspectratio]{figures/dashboard3.png}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.49\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.27\textheight,keepaspectratio]{../figures/dashboard4.png}
+    \includegraphics[width=\textwidth,height=0.27\textheight,keepaspectratio]{figures/dashboard4.png}
 \end{minipage}\par
 \vspace{18mm}
 \noindent
 \begin{minipage}[t]{0.49\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.27\textheight,keepaspectratio]{../figures/dashboard5.png}
+    \includegraphics[width=\textwidth,height=0.27\textheight,keepaspectratio]{figures/dashboard5.png}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.49\textwidth}\vspace{0pt}
     \centering
-    \includegraphics[width=\textwidth,height=0.27\textheight,keepaspectratio]{../figures/dashboard6.png}
+    \includegraphics[width=\textwidth,height=0.27\textheight,keepaspectratio]{figures/dashboard6.png}
 \end{minipage}\par
 
 \end{document}
