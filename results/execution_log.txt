@@ -1,0 +1,60 @@
+========================================================================================
+PHASE 1: Raw Dataset Provenance Audit, Preprocessing & Chronological Train-Test Split
+========================================================================================
+Raw NASA POWER MERRA-2 (1995-2024): N = 10,958 raw days -> N = 10,951 post-lag days
+Data Integrity Audit  : NaN = 0, Fill(-999) = 0, Duplicate Dates = 0, Missing Dates = 0
+Training Set (1995-2018): N = 8,759 days | P95 = 13.74 mm/day (439 extremes, 5.01%) | Wet-Day R95p = 22.7520 mm/day (148 extremes, 1.69%)
+Testing Set  (2019-2024): N = 2,192 days | P95 Extremes = 164 (7.48%) | Wet-Day R95p Extremes = 64 (2.92%)
+
+========================================================================================
+PHASE 2: Unsupervised Weather Regime Clustering (K-Means k=3), PCA & FastICA
+========================================================================================
+Cluster 0 (Dry Winter / Post-Monsoon ): 3,395 days (38.76%) | Extremes =  14 (0.41% rate, 3.19% share)
+Cluster 1 (Pre-Monsoon Transitional  ): 2,067 days (23.60%) | Extremes =   8 (0.39% rate, 1.82% share)
+Cluster 2 (Active Saturated Monsoon  ): 3,297 days (37.64%) | Extremes = 417 (12.65% rate, 94.99% share)
+K-Means k=3 Diagnostics: Silhouette (full N=8,759) = 0.3119 (subsample=5,000: 0.3116) | Davies-Bouldin = 1.1327 | Inertia = 98,063.20
+PCA Variance Explained : PC1 = 42.29%, PC2 = 24.17% (2D = 66.46%), PC3 = 9.15% | m=7 retains 91.46% (>=90%), m=9 retains 95.11%
+
+========================================================================================
+PHASE 3: Supervised Hyperparameter Tuning (5-Fold Expanding TimeSeriesSplit)
+========================================================================================
+Logistic Regression     | CV F1: 0.3172 +/- 0.0778 | Fit: 0.053s | Selected: {'C': 0.01, 'penalty': 'l2', 'solver': 'lbfgs', 'class_weight': 'balanced'}
+Decision Tree           | CV F1: 0.3383 +/- 0.0566 | Fit: 0.058s | Selected: {'max_depth': 8, 'min_samples_leaf': 5, 'min_samples_split': 10, 'class_weight': 'balanced'}
+Support Vector Machine  | CV F1: 0.3476 +/- 0.0514 | Fit: 10.452s | Selected: {'C': 1.0, 'gamma': 'scale', 'class_weight': 'balanced'}
+Random Forest           | CV F1: 0.3780 +/- 0.0429 | Fit: 1.291s | Selected: {'max_depth': 8, 'min_samples_leaf': 5, 'n_estimators': 100, 'class_weight': 'balanced'}
+k-Nearest Neighbours    | CV F1: 0.2003 +/- 0.0844 | Fit: 0.002s | Selected: {'n_neighbors': 5, 'weights': 'uniform'}
+
+========================================================================================
+PHASE 4: Holdout Test Set Performance (2019-2024, N = 2,192 Days, 164 Extremes)
+========================================================================================
+Logistic Regression     | Acc: 75.87% | Prec: 23.20% | Rec: 96.34% | F1: 0.3740 (Block7 CI [31.97%, 42.63%]) | ROC-AUC: 0.9411 | PR-AUC: 0.5478 | Brier: 0.1621 | TN=1505, FP=523, FN=6, TP=158
+Decision Tree           | Acc: 81.07% | Prec: 26.45% | Rec: 85.98% | F1: 0.4046 (Block7 CI [34.75%, 45.44%]) | ROC-AUC: 0.8718 | PR-AUC: 0.4068 | Brier: 0.1418 | TN=1636, FP=392, FN=23, TP=141
+Support Vector Machine  | Acc: 79.06% | Prec: 24.70% | Rec: 87.80% | F1: 0.3855 (Block7 CI [33.07%, 43.70%]) | ROC-AUC: 0.9011 | PR-AUC: 0.3676 | Brier: 0.0553 | TN=1589, FP=439, FN=20, TP=144
+Random Forest           | Acc: 82.71% | Prec: 28.96% | Rec: 90.24% | F1: 0.4385 (Block7 CI [38.17%, 49.14%]) | ROC-AUC: 0.9349 | PR-AUC: 0.5517 | Brier: 0.1154 | TN=1665, FP=363, FN=16, TP=148
+k-Nearest Neighbours    | Acc: 93.16% | Prec: 58.75% | Rec: 28.66% | F1: 0.3852 (Block7 CI [30.77%, 44.90%]) | ROC-AUC: 0.8219 | PR-AUC: 0.3547 | Brier: 0.0560 | TN=1995, FP=33, FN=117, TP=47
+
+========================================================================================
+PHASE 5: Cost-Sensitive Threshold Sweep (15:1), OOF tau_CV*, and Tasks B & C
+========================================================================================
+Leakage-Free OOF Threshold (tau_CV* = 0.30): Recall = 98.17% (161/164, FN=3, FP=505) | Precision = 24.17% | F1 = 0.3880 | Test 15:1 Loss = 550
+Post-Hoc Test Minimum     (tau*    = 0.40): Recall = 95.73% (157/164, FN=7, FP=427) | Precision = 26.88% | F1 = 0.4198 | Test 15:1 Loss = 532 (vs 603 at tau=0.50)
+Task B (24-h Lead Time, t-1 -> y_t) LR  : Acc=72.31%, Prec=20.35%, Rec=92.68%, F1=0.3337, ROC-AUC=0.9088, PR-AUC=0.4526
+Task B (24-h Lead Time, t-1 -> y_t) RF  : Acc=81.07%, Prec=26.72%, Rec=87.80%, F1=0.4097, ROC-AUC=0.9135, PR-AUC=0.4194
+Task B (24-h Lead Time, t-1 -> y_t) kNN : Acc=92.29%, Prec=46.03%, Rec=17.68%, F1=0.2555, ROC-AUC=0.7812, PR-AUC=0.2509
+Task C (Wet-Day R95p = 22.75 mm/day) LR : Acc=78.01%, Prec=11.44%, Rec=96.88%, F1=0.2046, ROC-AUC=0.9461, PR-AUC=0.3985
+Task C (Wet-Day R95p = 22.75 mm/day) RF : Acc=83.85%, Prec=14.11%, Rec=89.06%, F1=0.2436, ROC-AUC=0.9276, PR-AUC=0.2851
+
+September 20-30, 2024 Kathmandu Flood Holdout Case Study:
+  2024-09-20 | Rain=  0.39 mm/d | RH2M=81.17% | RF_Prob=0.1288 | LR_Prob=0.5973 | LR_24h=0.4426 | GREEN (Normal)
+  2024-09-21 | Rain=  1.14 mm/d | RH2M=75.57% | RF_Prob=0.0810 | LR_Prob=0.4364 | LR_24h=0.5872 | YELLOW (Internal Watch)
+  2024-09-22 | Rain=  1.11 mm/d | RH2M=76.56% | RF_Prob=0.1815 | LR_Prob=0.3201 | LR_24h=0.5482 | YELLOW (Internal Watch)
+  2024-09-23 | Rain=  0.58 mm/d | RH2M=78.91% | RF_Prob=0.1831 | LR_Prob=0.3785 | LR_24h=0.4822 | GREEN (Normal)
+  2024-09-24 | Rain= 47.54 mm/d | RH2M=90.47% | RF_Prob=0.1307 | LR_Prob=0.7154 | LR_24h=0.4786 | ORANGE (Municipal Preparedness)
+  2024-09-25 | Rain= 55.89 mm/d | RH2M=92.45% | RF_Prob=0.7189 | LR_Prob=0.9962 | LR_24h=0.9992 | RED (High-Priority Escalation)
+  2024-09-26 | Rain= 16.56 mm/d | RH2M=92.08% | RF_Prob=0.6992 | LR_Prob=0.9939 | LR_24h=0.9990 | RED (High-Priority Escalation)
+  2024-09-27 | Rain= 76.28 mm/d | RH2M=91.16% | RF_Prob=0.6973 | LR_Prob=0.8674 | LR_24h=0.7910 | RED (High-Priority Escalation)
+  2024-09-28 | Rain= 93.26 mm/d | RH2M=94.48% | RF_Prob=0.6881 | LR_Prob=0.9997 | LR_24h=1.0000 | RED (High-Priority Escalation)
+  2024-09-29 | Rain=  0.43 mm/d | RH2M=90.49% | RF_Prob=0.4937 | LR_Prob=0.9993 | LR_24h=1.0000 | ORANGE (Municipal Preparedness)
+  2024-09-30 | Rain=  0.07 mm/d | RH2M=92.32% | RF_Prob=0.2237 | LR_Prob=0.1681 | LR_24h=0.1962 | GREEN (Normal)
+
+Exported authoritative single-source-of-truth metrics to: c:\MLAssignment\results\verified_metrics.json (Total runtime: 227.40s)

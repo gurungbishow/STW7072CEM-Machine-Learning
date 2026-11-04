@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kathmandu Airport Extreme Rainfall ML Early-Warning Dashboard</title>
+    <!-- Prevent favicon.ico network request hanging -->
+    <link rel="icon" href="data:,">
+    <!-- External Modular Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="container">
+    <!-- Header Section -->
+    <header class="header">
+        <div class="header-top">
+            <div>
+                <h1>Kathmandu Airport Extreme Rainfall ML Early-Warning Dashboard</h1>
+                <p>
+                    Student: <strong>Bishow Gurung</strong> (College ID: <code>260005</code> | CUID: <code>17624457</code>) &bull;
+                    MSc Data Science &amp; Computational Intelligence &bull;
+                    Module: <code>STW7072CEM Machine Learning</code>
+                </p>
+            </div>
+            <div class="header-badges">
+                <span class="badge-tag">30-Year NASA MERRA-2 Daily Reanalysis (1995–2024)</span>
+                <span class="badge-tag badge-tag-accent">RO1 &bull; RO2 &bull; RO3 Decision-Support Prototype</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Key Performance Indicators (KPI Cards) -->
+    <section aria-label="Summary Performance Indicators">
+        <div class="cards-grid" id="kpi-cards-grid">
+            <div class="card">
+                <h3>Archive Coverage (1995–2024)</h3>
+                <div class="val">10,958 Days</div>
+                <div class="subtext">8,766 Train (1995–2018) / 2,192 Test (2019–2024)</div>
+            </div>
+            <div class="card">
+                <h3>Training Extreme Threshold</h3>
+                <div class="val">P<sub>95</sub> = 13.74 mm</div>
+                <div class="subtext">439 Train / 164 Test Extremes (5.01% / 7.48%)</div>
+            </div>
+            <div class="card">
+                <h3>RO1 Synoptic Regimes (K=3)</h3>
+                <div class="val">94.99% Monsoon</div>
+                <div class="subtext">417/439 Train Extremes in Cluster 2 (Sil = 0.3119)</div>
+            </div>
+            <div class="card">
+                <h3>Best Balanced Classifier (RF)</h3>
+                <div class="val">F1 = 0.4385</div>
+                <div class="subtext">PR-AUC = 0.5517 | Recall = 90.24%</div>
+            </div>
+            <div class="card">
+                <h3>Maximum Sensitivity (LR)</h3>
+                <div class="val">Recall = 96.34%</div>
+                <div class="subtext">158/164 Storms Detected (ROC-AUC = 0.9411)</div>
+            </div>
+            <div class="card">
+                <h3>Cost-Calibrated Cutoff</h3>
+                <div class="val">&tau;*<sub>CV</sub> = 0.30</div>
+                <div class="subtext">OOF 15:1 Loss Minimized (RF Rec = 98.17%)</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 1: Interactive Multi-Task Evaluation Matrix Table (RO2 & RO3) -->
+    <section aria-labelledby="sec-table-title">
+        <div class="section-header-row">
+            <h2 class="section-title" id="sec-table-title">
+                <span class="section-number">1</span>
+                <span id="table-section-heading-text">Holdout Model Evaluation Matrix — Task A: Same-Day Classification (P<sub>95</sub> = 13.74 mm/day)</span>
+            </h2>
+            <div class="task-tabs" role="tablist" aria-label="Operational Benchmark Task Switcher">
+                <button type="button" class="task-tab active" data-task="task_a" role="tab" aria-selected="true">
+                    Task A: Same-Day (P<sub>95</sub> = 13.74 mm)
+                </button>
+                <button type="button" class="task-tab" data-task="task_b" role="tab" aria-selected="false">
+                    Task B: 24-h Lead Forecast (t&minus;1 &rarr; y<sub>t</sub>)
+                </button>
+                <button type="button" class="task-tab" data-task="task_c" role="tab" aria-selected="false">
+                    Task C: Wet-Day Deluge (R95p = 22.75 mm)
+                </button>
+                <button type="button" class="task-tab" data-task="pca_ablation" role="tab" aria-selected="false">
+                    RO2: Full 22-D vs. 7-PCA Subspace
+                </button>
+            </div>
+        </div>
+
+        <div class="task-context-banner" id="task-context-banner">
+            <strong>Task A (Same-Day Atmospheric State Classification, &tau; = 0.50):</strong> Evaluates all five supervised classifiers on the 2,192-day holdout test period (2019–2024, 164 extreme events &ge; 13.74 mm/day). Random Forest achieves the highest balanced F1-score (0.4385) and PR-AUC (0.5517), while Logistic Regression achieves the highest Recall (96.34%, 158/164 storms) and ROC-AUC (0.9411).
+        </div>
+
+        <div class="table-wrapper" tabindex="0" role="region" aria-label="Holdout Model Evaluation Matrix Table">
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col" style="text-align: left;">Classifier / Configuration</th>
+                        <th scope="col">Accuracy</th>
+                        <th scope="col">Precision</th>
+                        <th scope="col">Recall / POD</th>
+                        <th scope="col">F1-Score</th>
+                        <th scope="col">95% Block-7 CI / Macro-F1</th>
+                        <th scope="col">ROC-AUC</th>
+                        <th scope="col">PR-AUC</th>
+                        <th scope="col">Brier Loss</th>
+                        <th scope="col">Confusion Breakdown</th>
+                    </tr>
+                </thead>
+                <tbody id="metrics-table-body">
+                    <tr>
+                        <td colspan="10" style="padding: 24px; color: var(--text-muted);">
+                            Loading verified metrics table...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Section 2: Model Comparison Chart -->
+    <section aria-labelledby="sec-chart1-title">
+        <h2 class="section-title" id="sec-chart1-title">
+            <span class="section-number">2</span>
+            <span id="chart1-section-heading-text">Out-of-Sample Classifier Performance Benchmarks (Synchronized with Selected Task)</span>
+        </h2>
+        <div class="chart-card">
+            <div id="chart-model-comparison" class="chart-plot"></div>
+        </div>
+    </section>
+
+    <!-- Section 3: Interactive Cost-Sensitive Decision-Threshold & Three-Tier Early-Warning Simulator (RO3) -->
+    <section aria-labelledby="sec-chart2-title">
+        <h2 class="section-title" id="sec-chart2-title">
+            <span class="section-number">3</span>
+            Interactive Cost-Sensitive Threshold &amp; Three-Tier Early-Warning Simulator (RO3)
+        </h2>
+
+        <div class="simulator-panel">
+            <div class="simulator-controls">
+                <div class="sim-control-group">
+                    <label for="sim-model-select">Classifier Model:</label>
+                    <select id="sim-model-select" class="sim-select">
+                        <option value="rf" selected>Random Forest (Best Balanced / Lowest Cost)</option>
+                        <option value="lr">Logistic Regression (Highest Sensitivity)</option>
+                        <option value="svm">Support Vector Machine (RBF Kernel)</option>
+                    </select>
+                </div>
+
+                <div class="sim-control-group sim-slider-group">
+                    <label for="sim-threshold-slider">
+                        Decision Probability Cutoff (&tau;): <strong id="sim-threshold-display">0.300</strong>
+                    </label>
+                    <input type="range" id="sim-threshold-slider" min="0.05" max="0.95" step="0.025" value="0.30">
+                </div>
+
+                <div class="sim-presets" aria-label="Operational Threshold Presets">
+                    <button type="button" class="preset-btn" data-tau="0.25">Yellow Watch (&tau;=0.25)</button>
+                    <button type="button" class="preset-btn active" data-tau="0.30">OOF Optimum (&tau;*<sub>CV</sub>=0.30)</button>
+                    <button type="button" class="preset-btn" data-tau="0.40">Test Min (&tau;*=0.40)</button>
+                    <button type="button" class="preset-btn" data-tau="0.50">Default (&tau;=0.50)</button>
+                    <button type="button" class="preset-btn" data-tau="0.70">Red Escalation (&tau;=0.70)</button>
+                </div>
+            </div>
+
+            <!-- Live Three-Tier Advisory Banner -->
+            <div id="sim-advisory-banner" class="advisory-banner advisory-orange">
+                <div class="advisory-tier-badge" id="sim-advisory-badge">TIER 2: ORANGE STANDBY (0.30 &le; P &lt; 0.70)</div>
+                <div class="advisory-desc" id="sim-advisory-desc">
+                    Prospective out-of-fold 15:1 cost-optimal threshold (&tau;*<sub>CV</sub> = 0.30). Triggers pre-emptive TIA runway drainage clearance and air-traffic holding standby while detecting 161/164 holdout storms (98.17% Recall).
+                </div>
+            </div>
+
+            <!-- Live Threshold Metrics Grid -->
+            <div class="sim-metrics-grid" id="sim-metrics-grid">
+                <div class="sim-metric-box">
+                    <span class="sim-label">Recall / POD</span>
+                    <span class="sim-val" id="sim-val-recall">98.17%</span>
+                    <span class="sim-sub" id="sim-sub-recall">161 / 164 Storms Caught</span>
+                </div>
+                <div class="sim-metric-box">
+                    <span class="sim-label">Precision</span>
+                    <span class="sim-val" id="sim-val-precision">24.17%</span>
+                    <span class="sim-sub" id="sim-sub-far">False Alarm Ratio: 75.83%</span>
+                </div>
+                <div class="sim-metric-box">
+                    <span class="sim-label">F1-Score</span>
+                    <span class="sim-val" id="sim-val-f1">0.3880</span>
+                    <span class="sim-sub" id="sim-sub-spec">Specificity: 75.10%</span>
+                </div>
+                <div class="sim-metric-box">
+                    <span class="sim-label">15:1 Disaster Cost</span>
+                    <span class="sim-val" id="sim-val-cost15">550 units</span>
+                    <span class="sim-sub" id="sim-sub-cost5">5:1 Moderate Cost: 520 units</span>
+                </div>
+                <div class="sim-metric-box">
+                    <span class="sim-label">Confusion Breakdown</span>
+                    <span class="sim-val sim-val-mono" id="sim-val-cm">TP=161 | FN=3</span>
+                    <span class="sim-sub sim-val-mono" id="sim-sub-cm">FP=505 | TN=1523</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div id="chart-cost-tradeoff" class="chart-plot"></div>
+        </div>
+    </section>
+
+    <!-- Section 4: Unsupervised Synoptic Weather Regimes (RO1) & Physical Feature Attribution (RO2) -->
+    <section aria-labelledby="sec-ro1-title">
+        <h2 class="section-title" id="sec-ro1-title">
+            <span class="section-number">4</span>
+            Unsupervised Synoptic Weather Regimes (RO1, K = 3) &amp; Top-10 Physical Feature Attribution (RO2)
+        </h2>
+
+        <div class="regime-cards-grid" id="regime-cards-grid">
+            <div class="regime-card regime-dry">
+                <div class="regime-header">
+                    <span class="badge badge-blue">Cluster 0 &bull; 3,395 Train Days (38.73%)</span>
+                    <span class="regime-rate">0.41% Extreme Rate (14 Events)</span>
+                </div>
+                <h3>Dry Winter &amp; Post-Monsoon Regime</h3>
+                <p>Cool, high-pressure continental airmass (T2M = 13.90&deg;C, RH2M = 48.56%, QV2M = 5.57 g/kg, PS = 87.63 kPa, 3-day rain = 0.87 mm). Accounts for only 3.19% of historical extreme rainfall events.</p>
+            </div>
+            <div class="regime-card regime-premonsoon">
+                <div class="regime-header">
+                    <span class="badge badge-amber">Cluster 1 &bull; 2,067 Train Days (23.58%)</span>
+                    <span class="regime-rate">0.39% Extreme Rate (8 Events)</span>
+                </div>
+                <h3>Hot Pre-Monsoon Transitional Regime</h3>
+                <p>Warm, desiccated pre-monsoon boundary layer with high solar irradiance and wide diurnal thermal range (T2M_MAX = 29.54&deg;C, T2M_RANGE = 13.02&deg;C, RH2M = 34.02%, DPD = 18.49&deg;C). Accounts for 1.82% of extremes.</p>
+            </div>
+            <div class="regime-card regime-monsoon">
+                <div class="regime-header">
+                    <span class="badge badge-red">Cluster 2 &bull; 3,297 Train Days (37.61%)</span>
+                    <span class="regime-rate">12.65% Extreme Rate (417 Events)</span>
+                </div>
+                <h3>Active Saturated Monsoon Regime (94.99% of Extremes)</h3>
+                <p>Warm, moisture-laden monsoon airmass with near-saturation humidity, compressed diurnal range, low surface pressure, and multi-day antecedent wetness (RH2M = 80.92%, QV2M = 15.85 g/kg, T2MDEW = 18.76&deg;C, 3-day rain = 18.51 mm).</p>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div id="chart-feature-attribution" class="chart-plot"></div>
+        </div>
+    </section>
+
+    <!-- Section 5: Real-World Case Study Chart & Daily Timeline Table -->
+    <section aria-labelledby="sec-chart3-title">
+        <h2 class="section-title" id="sec-chart3-title">
+            <span class="section-number">5</span>
+            Real-World Case Study: 20–30 September 2024 Kathmandu Extreme Flood Event (RO3)
+        </h2>
+        <div class="chart-card">
+            <div id="chart-case-study" class="chart-plot"></div>
+        </div>
+
+        <div class="table-wrapper" tabindex="0" role="region" aria-label="September 2024 Flood Event Daily Timeline Table">
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col" style="text-align: left;">Observation Date</th>
+                        <th scope="col">MERRA-2 Rainfall (mm/day)</th>
+                        <th scope="col">Observed Status (P<sub>95</sub> = 13.74 mm)</th>
+                        <th scope="col">Same-Day RF Prob P(Y=1)</th>
+                        <th scope="col">Same-Day LR Prob P(Y=1)</th>
+                        <th scope="col">24-h Lead LR Prob P(Y<sub>t</sub>=1 | x<sub>t&minus;1</sub>)</th>
+                        <th scope="col">Triggered Operational Tier (RF / LR)</th>
+                    </tr>
+                </thead>
+                <tbody id="case-study-table-body">
+                    <tr>
+                        <td colspan="7" style="padding: 20px; color: var(--text-muted);">
+                            Loading September 2024 flood timeline...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>
+            STW7072CEM Machine Learning Coursework Prototype &bull;
+            Softwarica College of IT &amp; E-Commerce / Coventry University &bull;
+            Authoritative source: <code>results/verified_metrics.json</code> &amp; <code>results/operational_threshold_simulation.csv</code>
+        </p>
+    </footer>
+</div>
+
+<!-- 1. Plotly Graphing Engine: Loaded locally from js/plotly.min.js (100% offline) with automatic CDN fallback -->
+<script src="js/plotly.min.js"></script>
+<script>
+    if (typeof Plotly === "undefined") {
+        document.write('<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"><\/script>');
+    }
+</script>
+
+<!-- 2. Application Data: Verified metrics and threshold simulation -->
+<script src="js/dashboard-data.js"></script>
+
+<!-- 3. Application Logic: Modular chart rendering and interactions -->
+<script src="js/dashboard.js"></script>
+
+</body>
+</html>

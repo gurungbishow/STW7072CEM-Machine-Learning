@@ -1,0 +1,6 @@
+Model,Best_Params,CV_TimeSeries_F1_Mean,CV_TimeSeries_F1_Std,Fit_Runtime_Sec
+Logistic Regression,"{'C': 0.01, 'penalty': 'l2', 'solver': 'lbfgs', 'class_weight': 'balanced'}",0.317238,0.077776,0.0533
+Decision Tree,"{'max_depth': 8, 'min_samples_leaf': 5, 'min_samples_split': 10, 'class_weight': 'balanced'}",0.338329,0.056643,0.0576
+Support Vector Machine,"{'C': 1.0, 'gamma': 'scale', 'class_weight': 'balanced'}",0.347627,0.051408,10.4518
+Random Forest,"{'max_depth': 8, 'min_samples_leaf': 5, 'n_estimators': 100, 'class_weight': 'balanced'}",0.37804,0.042946,1.2909
+k-Nearest Neighbours,"{'n_neighbors': 5, 'weights': 'uniform'}",0.200322,0.0844,0.0024

@@ -1,0 +1,656 @@
+{
+  "block_length_7": {
+    "Logistic Regression": {
+      "Accuracy": {
+        "mean": 0.7591592153284671,
+        "ci_lower": 0.7226277372262774,
+        "ci_upper": 0.7938070255474452,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "75.92% [72.26%, 79.38%]"
+      },
+      "Precision": {
+        "mean": 0.23094786697334735,
+        "ci_lower": 0.19154929577464788,
+        "ci_upper": 0.27209643163423913,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "23.09% [19.15%, 27.21%]"
+      },
+      "Recall": {
+        "mean": 0.963327671282158,
+        "ci_lower": 0.930547480620155,
+        "ci_upper": 0.9889577021327155,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "96.33% [93.05%, 98.90%]"
+      },
+      "F1_Score": {
+        "mean": 0.3721641564989539,
+        "ci_lower": 0.31969125783199814,
+        "ci_upper": 0.42633293763871577,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "37.22% [31.97%, 42.63%]"
+      },
+      "ROC_AUC": {
+        "mean": 0.9410717300254228,
+        "ci_lower": 0.9244903797898084,
+        "ci_upper": 0.9555318541664343,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "94.11% [92.45%, 95.55%]"
+      },
+      "PR_AUC": {
+        "mean": 0.5515409678482004,
+        "ci_lower": 0.4671535364811862,
+        "ci_upper": 0.6340927997560217,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "55.15% [46.72%, 63.41%]"
+      },
+      "Brier_Score": {
+        "mean": 0.16171855422359607,
+        "ci_lower": 0.14156220961083693,
+        "ci_upper": 0.18340371769835265,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "16.17% [14.16%, 18.34%]"
+      }
+    },
+    "Decision Tree": {
+      "Accuracy": {
+        "mean": 0.810776003649635,
+        "ci_lower": 0.7814666970802919,
+        "ci_upper": 0.8385036496350365,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "81.08% [78.15%, 83.85%]"
+      },
+      "Precision": {
+        "mean": 0.26282028774791943,
+        "ci_lower": 0.21974798387096775,
+        "ci_upper": 0.3060875135667412,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "26.28% [21.97%, 30.61%]"
+      },
+      "Recall": {
+        "mean": 0.8592741111625691,
+        "ci_lower": 0.8013206304945587,
+        "ci_upper": 0.9119549974502805,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "85.93% [80.13%, 91.20%]"
+      },
+      "F1_Score": {
+        "mean": 0.402056730134805,
+        "ci_lower": 0.34754800525109586,
+        "ci_upper": 0.4544341598979258,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "40.21% [34.75%, 45.44%]"
+      },
+      "ROC_AUC": {
+        "mean": 0.8712769503533211,
+        "ci_lower": 0.8373993394350482,
+        "ci_upper": 0.9030489281222129,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "87.13% [83.74%, 90.30%]"
+      },
+      "PR_AUC": {
+        "mean": 0.40540777889951857,
+        "ci_lower": 0.33055806209997796,
+        "ci_upper": 0.48374221820338054,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "40.54% [33.06%, 48.37%]"
+      },
+      "Brier_Score": {
+        "mean": 0.1415918226148209,
+        "ci_lower": 0.12113351390042135,
+        "ci_upper": 0.16379427712485747,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "14.16% [12.11%, 16.38%]"
+      }
+    },
+    "Support Vector Machine": {
+      "Accuracy": {
+        "mean": 0.7911300182481751,
+        "ci_lower": 0.7577440693430657,
+        "ci_upper": 0.822547901459854,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "79.11% [75.77%, 82.25%]"
+      },
+      "Precision": {
+        "mean": 0.24590910755267473,
+        "ci_lower": 0.205,
+        "ci_upper": 0.28846153846153844,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "24.59% [20.50%, 28.85%]"
+      },
+      "Recall": {
+        "mean": 0.878107331942368,
+        "ci_lower": 0.8111868686868686,
+        "ci_upper": 0.937509704968944,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "87.81% [81.12%, 93.75%]"
+      },
+      "F1_Score": {
+        "mean": 0.3837341517744387,
+        "ci_lower": 0.33065503355704695,
+        "ci_upper": 0.43700588989529837,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "38.37% [33.07%, 43.70%]"
+      },
+      "ROC_AUC": {
+        "mean": 0.9015986593365272,
+        "ci_lower": 0.8779000732396117,
+        "ci_upper": 0.9223527072615485,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "90.16% [87.79%, 92.24%]"
+      },
+      "PR_AUC": {
+        "mean": 0.3754953529423314,
+        "ci_lower": 0.2978124667348883,
+        "ci_upper": 0.45137119836775336,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "37.55% [29.78%, 45.14%]"
+      },
+      "Brier_Score": {
+        "mean": 0.054871179399811724,
+        "ci_lower": 0.04505510088894974,
+        "ci_upper": 0.06643050609876634,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "5.49% [4.51%, 6.64%]"
+      }
+    },
+    "Random Forest": {
+      "Accuracy": {
+        "mean": 0.8273339416058394,
+        "ci_lower": 0.7979014598540146,
+        "ci_upper": 0.8562956204379562,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "82.73% [79.79%, 85.63%]"
+      },
+      "Precision": {
+        "mean": 0.2882071019880939,
+        "ci_lower": 0.24312643716887208,
+        "ci_upper": 0.33502328507957163,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "28.82% [24.31%, 33.50%]"
+      },
+      "Recall": {
+        "mean": 0.9024572292191844,
+        "ci_lower": 0.8507350969702386,
+        "ci_upper": 0.9470588235294117,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "90.25% [85.07%, 94.71%]"
+      },
+      "F1_Score": {
+        "mean": 0.4364150222881789,
+        "ci_lower": 0.38168067226890756,
+        "ci_upper": 0.49141009852216744,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "43.64% [38.17%, 49.14%]"
+      },
+      "ROC_AUC": {
+        "mean": 0.934956191873552,
+        "ci_lower": 0.9181446188198916,
+        "ci_upper": 0.9507719909262885,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "93.50% [91.81%, 95.08%]"
+      },
+      "PR_AUC": {
+        "mean": 0.5512971297890287,
+        "ci_lower": 0.4621153565231408,
+        "ci_upper": 0.6388780500438395,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "55.13% [46.21%, 63.89%]"
+      },
+      "Brier_Score": {
+        "mean": 0.11522253499652867,
+        "ci_lower": 0.0973222297772936,
+        "ci_upper": 0.13360024449837185,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "11.52% [9.73%, 13.36%]"
+      }
+    },
+    "k-Nearest Neighbours": {
+      "Accuracy": {
+        "mean": 0.9320100364963505,
+        "ci_lower": 0.916970802919708,
+        "ci_upper": 0.9452554744525548,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "93.20% [91.70%, 94.53%]"
+      },
+      "Precision": {
+        "mean": 0.5871502974266074,
+        "ci_lower": 0.48645667726550085,
+        "ci_upper": 0.6875202922077922,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "58.72% [48.65%, 68.75%]"
+      },
+      "Recall": {
+        "mean": 0.2855934446619411,
+        "ci_lower": 0.2187448261589404,
+        "ci_upper": 0.35136386386386387,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "28.56% [21.87%, 35.14%]"
+      },
+      "F1_Score": {
+        "mean": 0.38298985850659834,
+        "ci_lower": 0.30767634854771786,
+        "ci_upper": 0.4489910570969961,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "38.30% [30.77%, 44.90%]"
+      },
+      "ROC_AUC": {
+        "mean": 0.8217608141194952,
+        "ci_lower": 0.7811983515493665,
+        "ci_upper": 0.8616738229927345,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "82.18% [78.12%, 86.17%]"
+      },
+      "PR_AUC": {
+        "mean": 0.3554738155288412,
+        "ci_lower": 0.281202888229779,
+        "ci_upper": 0.42870572222071707,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "35.55% [28.12%, 42.87%]"
+      },
+      "Brier_Score": {
+        "mean": 0.05564,
+        "ci_lower": 0.04579972627737227,
+        "ci_upper": 0.06691697080291972,
+        "block_length": 7,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "5.56% [4.58%, 6.69%]"
+      }
+    }
+  },
+  "iid_block_length_1": {
+    "Logistic Regression": {
+      "Accuracy": {
+        "mean": 0.7592107664233576,
+        "ci_lower": 0.7408759124087592,
+        "ci_upper": 0.7769160583941606,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "75.92% [74.09%, 77.69%]"
+      },
+      "Precision": {
+        "mean": 0.23262350895922368,
+        "ci_lower": 0.20115712745415562,
+        "ci_upper": 0.2644963735364757,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "23.26% [20.12%, 26.45%]"
+      },
+      "Recall": {
+        "mean": 0.9634778835776941,
+        "ci_lower": 0.9285607356715141,
+        "ci_upper": 0.9884393063583815,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "96.35% [92.86%, 98.84%]"
+      },
+      "F1_Score": {
+        "mean": 0.37449310446177164,
+        "ci_lower": 0.332449400241763,
+        "ci_upper": 0.41589735277020073,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "37.45% [33.24%, 41.59%]"
+      },
+      "ROC_AUC": {
+        "mean": 0.9413188464097455,
+        "ci_lower": 0.926566678104477,
+        "ci_upper": 0.9544461676440311,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "94.13% [92.66%, 95.44%]"
+      },
+      "PR_AUC": {
+        "mean": 0.5548629806174381,
+        "ci_lower": 0.4708805450040217,
+        "ci_upper": 0.640945899792128,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "55.49% [47.09%, 64.09%]"
+      },
+      "Brier_Score": {
+        "mean": 0.1617240912322431,
+        "ci_lower": 0.15135178794703852,
+        "ci_upper": 0.17222262807861044,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "16.17% [15.14%, 17.22%]"
+      }
+    },
+    "Decision Tree": {
+      "Accuracy": {
+        "mean": 0.8112267335766423,
+        "ci_lower": 0.7937956204379562,
+        "ci_upper": 0.8271099452554744,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "81.12% [79.38%, 82.71%]"
+      },
+      "Precision": {
+        "mean": 0.265376772522868,
+        "ci_lower": 0.22718107065132037,
+        "ci_upper": 0.30132347867339454,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "26.54% [22.72%, 30.13%]"
+      },
+      "Recall": {
+        "mean": 0.8598491888294935,
+        "ci_lower": 0.8048710400897113,
+        "ci_upper": 0.9112602805999033,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "85.98% [80.49%, 91.13%]"
+      },
+      "F1_Score": {
+        "mean": 0.4052463725356649,
+        "ci_lower": 0.3570063425541789,
+        "ci_upper": 0.44668055561152326,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "40.52% [35.70%, 44.67%]"
+      },
+      "ROC_AUC": {
+        "mean": 0.8719100545029291,
+        "ci_lower": 0.842370122150669,
+        "ci_upper": 0.8983541469933829,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "87.19% [84.24%, 89.84%]"
+      },
+      "PR_AUC": {
+        "mean": 0.4089275387644873,
+        "ci_lower": 0.335983541170624,
+        "ci_upper": 0.4821166004676826,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "40.89% [33.60%, 48.21%]"
+      },
+      "Brier_Score": {
+        "mean": 0.1413131414964582,
+        "ci_lower": 0.12955093380247706,
+        "ci_upper": 0.15360718176320523,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "14.13% [12.96%, 15.36%]"
+      }
+    },
+    "Support Vector Machine": {
+      "Accuracy": {
+        "mean": 0.7912262773722628,
+        "ci_lower": 0.7746350364963503,
+        "ci_upper": 0.8070255474452555,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "79.12% [77.46%, 80.70%]"
+      },
+      "Precision": {
+        "mean": 0.24778997650416568,
+        "ci_lower": 0.2137905129238386,
+        "ci_upper": 0.2827832688949863,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "24.78% [21.38%, 28.28%]"
+      },
+      "Recall": {
+        "mean": 0.8781213345246827,
+        "ci_lower": 0.8278037291075371,
+        "ci_upper": 0.9285714285714286,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "87.81% [82.78%, 92.86%]"
+      },
+      "F1_Score": {
+        "mean": 0.3862041839985382,
+        "ci_lower": 0.34269085731876253,
+        "ci_upper": 0.4293470511140236,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "38.62% [34.27%, 42.93%]"
+      },
+      "ROC_AUC": {
+        "mean": 0.9015906662901475,
+        "ci_lower": 0.8850224307073055,
+        "ci_upper": 0.918000195524834,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "90.16% [88.50%, 91.80%]"
+      },
+      "PR_AUC": {
+        "mean": 0.3771369935754129,
+        "ci_lower": 0.3118602896830569,
+        "ci_upper": 0.4534917551909552,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "37.71% [31.19%, 45.35%]"
+      },
+      "Brier_Score": {
+        "mean": 0.055210901664744835,
+        "ci_lower": 0.04845456313001922,
+        "ci_upper": 0.061895145373540954,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "5.52% [4.85%, 6.19%]"
+      }
+    },
+    "Random Forest": {
+      "Accuracy": {
+        "mean": 0.8276633211678832,
+        "ci_lower": 0.8129562043795621,
+        "ci_upper": 0.8426208941605839,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "82.77% [81.30%, 84.26%]"
+      },
+      "Precision": {
+        "mean": 0.2905388340907722,
+        "ci_lower": 0.2523319166935224,
+        "ci_upper": 0.3299481409472132,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "29.05% [25.23%, 32.99%]"
+      },
+      "Recall": {
+        "mean": 0.9024461265370355,
+        "ci_lower": 0.8509168884945283,
+        "ci_upper": 0.9456554478784703,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "90.24% [85.09%, 94.57%]"
+      },
+      "F1_Score": {
+        "mean": 0.43921478307035683,
+        "ci_lower": 0.3922095623567679,
+        "ci_upper": 0.484766641484093,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "43.92% [39.22%, 48.48%]"
+      },
+      "ROC_AUC": {
+        "mean": 0.9351661961167269,
+        "ci_lower": 0.9213129703597958,
+        "ci_upper": 0.9479888175639781,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "93.52% [92.13%, 94.80%]"
+      },
+      "PR_AUC": {
+        "mean": 0.5545385530578758,
+        "ci_lower": 0.4746670738492799,
+        "ci_upper": 0.6264455404725017,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "55.45% [47.47%, 62.64%]"
+      },
+      "Brier_Score": {
+        "mean": 0.11507693857132555,
+        "ci_lower": 0.1059126069252273,
+        "ci_upper": 0.12368085394717888,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "11.51% [10.59%, 12.37%]"
+      }
+    },
+    "k-Nearest Neighbours": {
+      "Accuracy": {
+        "mean": 0.9316519160583941,
+        "ci_lower": 0.9206204379562044,
+        "ci_upper": 0.9416058394160584,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "93.17% [92.06%, 94.16%]"
+      },
+      "Precision": {
+        "mean": 0.5897324276668142,
+        "ci_lower": 0.478194591728526,
+        "ci_upper": 0.6933333333333334,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "58.97% [47.82%, 69.33%]"
+      },
+      "Recall": {
+        "mean": 0.28695570647229585,
+        "ci_lower": 0.22159005851932498,
+        "ci_upper": 0.3614636926082709,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "28.70% [22.16%, 36.15%]"
+      },
+      "F1_Score": {
+        "mean": 0.3850446472678759,
+        "ci_lower": 0.3070009117466461,
+        "ci_upper": 0.4633516249657982,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "38.50% [30.70%, 46.34%]"
+      },
+      "ROC_AUC": {
+        "mean": 0.822343414265713,
+        "ci_lower": 0.7848968447902129,
+        "ci_upper": 0.8611901737401376,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "82.23% [78.49%, 86.12%]"
+      },
+      "PR_AUC": {
+        "mean": 0.35883614850933826,
+        "ci_lower": 0.2866973424408286,
+        "ci_upper": 0.4340441912983241,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "35.88% [28.67%, 43.40%]"
+      },
+      "Brier_Score": {
+        "mean": 0.055892572992700736,
+        "ci_lower": 0.04886770072992701,
+        "ci_upper": 0.06325319343065693,
+        "block_length": 1,
+        "n_bootstrap": 1000,
+        "seed": 42,
+        "str_format": "5.59% [4.89%, 6.33%]"
+      }
+    }
+  }
+}
